@@ -1,0 +1,40 @@
+@startuml brainstorm
+
+title "Brainstorm poneytoponey design"
+
+hide empty members
+
+interface Chat extends Remote {
+    sendMessage(text: String, sender_timestamp: Timestamp)
+    close()
+}
+
+class DirectChat implements Chat {
+    close()
+}
+
+interface ChatManager extends Remote {
+    askForChat(ourChat: ChatManager)
+    approveChat(approvedManager: ChatManager): Chat
+}
+
+class DirectChatManager implements ChatManager {
+    username: String
+    listParticipantsUsername(): String[]
+}
+
+DirectChatManager "1"-"*" DirectChat: manage >
+DirectChat "1"-"*" Message: contain >
+
+class Message {
+    text: String
+    sender_timestamp: Timestamp
+    index: Integer
+    author: String
+}
+
+object Registry
+
+Registry "0..1"-"*" Remote: take notes by String of published >
+
+@enduml
