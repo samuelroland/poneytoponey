@@ -1,0 +1,7 @@
+.metals
+project/app/.settings
+project/app/bin
+project/app/.classpath
+project/app/.project
+project/.settings
+project/.project
