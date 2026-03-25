@@ -13,17 +13,17 @@ class DirectChat implements Chat {
     close()
 }
 
-interface ChatManager extends Remote {
-    askForChat(ourChat: ChatManager)
-    approveChat(approvedManager: ChatManager): Chat
+interface Identity extends Remote {
+    askForChat(ourChat: Identity)
+    approveChat(approvedManager: Identity): Chat
 }
 
-class DirectChatManager implements ChatManager {
+class HumanIdentity implements Identity {
     username: String
     listParticipantsUsername(): String[]
 }
 
-DirectChatManager "1"-"*" DirectChat: manage >
+HumanIdentity "1"-"*" DirectChat: manage >
 DirectChat "1"-"*" Message: contain >
 
 class Message {
