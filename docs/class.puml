@@ -12,6 +12,7 @@ App "1"--"1" View: start >
 
 interface View {
     start(humanIdentity: HumanIdentity)
+    showChatRequest(from: String)
 }
 
 class ShellView implements View {
@@ -23,7 +24,7 @@ class ShellView implements View {
     - closeChat(recipient: String)
     - sendMessage(text: String)
     - listParticipants()
-    - askForInput()
+    - waitWithShellPrompt()
     - parseCommand()
 }
 
@@ -35,10 +36,10 @@ class Chat {
 }
 
 interface Identity extends Remote {
-    +askForChat(ourChat: Identity, chatId: Uuid)
-    +approveChat(approvedManager: Identity)
-    +sendMessageInChat(chatId: Uuid, text: String, senderTimestamp: Timestamp)
-    +closeChat(chatId: Uuid)
+    +remoteAskForChat(author: String, chatId: Uuid)
+    +remoteApproveBackChat(chatId: Uuid)
+    +remoteSendMessageInChat(chatId: Uuid, text: String, senderTimestamp: Timestamp)
+    +remoteCloseChat(chatId: Uuid)
 }
 
 class HumanIdentity implements Identity {
@@ -46,10 +47,16 @@ class HumanIdentity implements Identity {
     +getUsername(): String
     +listParticipantsUsername(): String[]
     +getChats(): Chat[]
-    +createChat(): Chat
+    +createChat(recipient: String): Chat
+    +approveChat(chatId: Uuid)
+    +subscribeViewForChatRequest(view: View)
+    +sendMessage(chatId: Uuid, text: String)
+    +closeChat(chatId: Uuid)
 }
 
 HumanIdentity "1"-"*" Chat: manage >
+HumanIdentity "1"-"0..1" View: send event to >
+HumanIdentity "1"-u--"*" Identity: keep known participants \nin cache by username <
 Chat "1"--"*" Message: contain >
 
 class Message {
