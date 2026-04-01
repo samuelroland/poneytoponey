@@ -1,36 +1,62 @@
-@startuml brainstorm
+@startuml class
 
-title "Brainstorm poneytoponey design"
+title "Diagramme de classe poneytoponey"
 
 hide empty members
 
-interface Chat extends Remote {
-    sendMessage(text: String, sender_timestamp: Timestamp)
-    close()
+interface Remote <<java.rmi>>
+
+class App
+HumanIdentity "1"--"0..1" App: create <
+App "1"--"1" View: start >
+
+interface View {
+    start(humanIdentity: HumanIdentity)
 }
 
-class DirectChat implements Chat {
-    close()
+class ShellView implements View {
+    - currentChat: Uuid
+    - joinedNetwork: bool
+    - join(username: String)
+    - showHelp()
+    - createSwitchChat(recipient: String)
+    - closeChat(recipient: String)
+    - sendMessage(text: String)
+    - listParticipants()
+    - askForInput()
+    - parseCommand()
+}
+
+class Chat {
+    -uuid: Uuid
+    -approved: bool
+    +getUuid(): Uuid
+    +getApproved(): bool
 }
 
 interface Identity extends Remote {
-    askForChat(ourChat: Identity)
-    approveChat(approvedManager: Identity): Chat
+    +askForChat(ourChat: Identity, chatId: Uuid)
+    +approveChat(approvedManager: Identity)
+    +sendMessageInChat(chatId: Uuid, text: String, senderTimestamp: Timestamp)
+    +closeChat(chatId: Uuid)
 }
 
 class HumanIdentity implements Identity {
-    username: String
-    listParticipantsUsername(): String[]
+    -username: String
+    +getUsername(): String
+    +listParticipantsUsername(): String[]
+    +getChats(): Chat[]
+    +createChat(): Chat
 }
 
-HumanIdentity "1"-"*" DirectChat: manage >
-DirectChat "1"-"*" Message: contain >
+HumanIdentity "1"-"*" Chat: manage >
+Chat "1"--"*" Message: contain >
 
 class Message {
-    text: String
-    sender_timestamp: Timestamp
-    index: Integer
-    author: String
+    -text: String
+    -senderTimestamp: Timestamp
+    -index: Integer
+    -author: String
 }
 
 object Registry
