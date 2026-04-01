@@ -27,8 +27,9 @@ cd project
 ## Game usage
 Once started, the game acts like a small shell, with a few commands to do the chat actions. This defines the available commands of our shell.
 - `join alice`: join the network with username `alice`
-- `participants`: list participants in the network
+- `users`: list participants in the network
 - `chat jamy`: create a new chat with `jamy` if there is no existing chat and only if user `jamy` is in the network. If chat exist, just switch to it.
+- `approve jamy`: approve the chat asked by another user `jamy`
 - `chats`: list non-closed chats
 - `send hey there`: send a message in current chat with text `hey there`
 - `close`: list non-closed chats
