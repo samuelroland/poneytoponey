@@ -6,11 +6,6 @@ A peer-to-peer chat system, with simple direct conversations (2 persons). The in
 ## Important files
 - [docs/brainstorm.md](docs/brainstorm.md)
 
-## Installation
-TODO: setup `pocs` folder with a POC with Java RMI and Gradle to experiment and test the network setup ...
-
-TODO: setup gradle project
-
 ## Usage
 
 Just run
@@ -26,11 +21,12 @@ cd project
 
 ## Game usage
 Once started, the game acts like a small shell, with a few commands to do the chat actions. This defines the available commands of our shell.
-- `join alice`: join the network with username `alice`
+- `join alice`: join the network with username `alice` (we suppose all clients are using a unique username)
 - `users`: list participants in the network
 - `chat jamy`: create a new chat with `jamy` if there is no existing chat and only if user `jamy` is in the network. If chat exist, just switch to it.
 - `approve jamy`: approve the chat asked by another user `jamy`
+- `refuse jamy`: explicitly refuse the chat asked by another user `jamy`
 - `chats`: list non-closed chats
 - `send hey there`: send a message in current chat with text `hey there`
-- `close`: list non-closed chats
+- `close`: close the current chat
 

@@ -13,6 +13,8 @@ App "1"--"1" View: start >
 interface View {
     start(humanIdentity: HumanIdentity)
     showChatRequest(from: String)
+    showChatClose(from: String)
+    showChatRefuse(from: String)
 }
 
 class ShellView implements View {
@@ -22,6 +24,7 @@ class ShellView implements View {
     - showHelp()
     - createSwitchChat(recipient: String)
     - closeChat(recipient: String)
+    - refuseChat(recipient: String)
     - sendMessage(text: String)
     - listParticipants()
     - waitWithShellPrompt()
@@ -38,6 +41,7 @@ class Chat {
 interface Identity extends Remote {
     +remoteAskForChat(author: String, chatId: Uuid)
     +remoteApproveBackChat(chatId: Uuid)
+    +remoteRefuseChat(chatId: Uuid)
     +remoteSendMessageInChat(chatId: Uuid, text: String, senderTimestamp: Timestamp)
     +remoteCloseChat(chatId: Uuid)
 }
@@ -49,12 +53,13 @@ class HumanIdentity implements Identity {
     +getChats(): Chat[]
     +createChat(recipient: String): Chat
     +approveChat(chatId: Uuid)
-    +subscribeViewForChatRequest(view: View)
+    +subscribeViewForChatEvent(view: View)
     +sendMessage(chatId: Uuid, text: String)
     +closeChat(chatId: Uuid)
 }
 
 HumanIdentity "1"-"*" Chat: manage >
+HumanIdentity "*"-l-"*" HumanIdentity: remotely discuss with >
 HumanIdentity "1"-"0..1" View: send event to >
 HumanIdentity "1"-u--"*" Identity: keep known participants \nin cache by username <
 Chat "1"--"*" Message: contain >

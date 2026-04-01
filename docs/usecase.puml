@@ -1,0 +1,14 @@
+@startuml
+left to right direction
+actor Membre as g
+  usecase "Avoir la liste des membres connectés" as UC1
+  usecase "Envoyer un message" as UC2
+  usecase "Recevoir un message" as UC3
+  usecase "Fermer le chat" as UC4
+  usecase "Consulter la liste et l'historique des conversations" as UC5
+g --> UC1
+g --> UC2
+g --> UC3
+g --> UC4
+g --> UC5
+@enduml

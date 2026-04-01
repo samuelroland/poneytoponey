@@ -10,7 +10,7 @@ rectangle "Gérer des chats directs" <<Requirement>> as r2
 rectangle "Envoyer des messages dans des chats" <<Requirement>> as r3
 rectangle "Découvrir les autres membres du réseau" <<Requirement>> as r4
 
-rectangle "Central registry" <<block>> as registry
+rectangle "Registre central" <<block>> as registry
 
 r1 <.. r2 : refine
 r1 <.. r3 : refine
