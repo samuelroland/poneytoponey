@@ -30,3 +30,8 @@ Once started, the game acts like a small shell, with a few commands to do the ch
 - `send hey there`: send a message in current chat with text `hey there`
 - `close`: close the current chat
 
+## TODOs
+- classe chat et message: Léna
+- shell view: Kylian
+- HumanIdentity part 1 -> username -> createChat Samuel
+- HumanIdentity part 2 -> approveChat -> closeChat Ileane
