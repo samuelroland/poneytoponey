@@ -1,6 +1,5 @@
 package poneytoponey;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -36,7 +35,7 @@ public class Chat {
     }
 
     public Message insertNewMessage(String text, String author) {
-        Timestamp ts = new Timestamp(System.currentTimeMillis());
+        long ts = System.currentTimeMillis();
         Message m = new Message(text, ts, messages.size(), author);
         messages.add(m);
         return m;

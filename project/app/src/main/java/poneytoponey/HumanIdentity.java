@@ -150,7 +150,7 @@ public class HumanIdentity implements Identity {
 
     }
 
-    public void remoteSendMessageInChat(UUID chatId, String text, Timestamp senderTimestamp) {
+    public void remoteSendMessageInChat(UUID chatId, String text, long senderTimestamp) {
         Chat chat = chats.get(chatId);
 
         if (chat == null) {
