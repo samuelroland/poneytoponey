@@ -27,6 +27,18 @@ public class HumanIdentity implements Identity {
         this.views = new ArrayList<>();
         this.chats = new HashMap<>();
         this.knownParticipants = new HashMap<>();
+        try {
+            this.remoteRegistry = LocateRegistry.getRegistry(poneytoponey.App.PORT);
+            Identity stub = (Identity) UnicastRemoteObject.exportObject(this, 0);
+
+            this.remoteRegistry.bind(user, stub);
+        } catch (AlreadyBoundException e) {
+            System.err.println("A username already exists in the network...");
+            System.err.println(e.getMessage());
+        } catch (RemoteException e) {
+            System.err.println("Cannot connect to RMI registry on port " + poneytoponey.App.PORT);
+            System.err.println(e.getMessage());
+        }
     }
 
     public void approveChat(UUID chatID) throws RemoteException {

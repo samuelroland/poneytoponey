@@ -55,12 +55,7 @@ public class ShellView implements View {
         System.out.print("Please choose a username to join the network: ");
         String username = scanner.nextLine();
 
-        try {
-            this.identity = new HumanIdentity(username);
-        } catch (RemoteException e) {
-            System.err.println("A username already exists in the network...");
-            System.err.println(e.getMessage());
-        }
+        this.identity = new HumanIdentity(username);
         scanner.close();
     }
 
