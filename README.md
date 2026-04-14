@@ -9,7 +9,8 @@ A peer-to-peer chat system, with simple direct conversations (2 persons). The in
 ## Usage
 Start an RMI registry with port 7000.
 ```sh
-rmiregistry 7000
+cd project
+just rmi
 ```
 
 Then you can start one client with
@@ -22,6 +23,14 @@ If you don't have gradle installed, you can use the gradle wrapper `gradlew`:
 cd project
 ./gradlew run
 ```
+
+**WARNING**: if you get an some class not found, this because the RMI registry doesn't know where to find the classes like here:
+```
+RemoteException occurred in server thread; nested exception is: 
+        java.rmi.UnmarshalException: error unmarshalling arguments; nested exception is: 
+        java.lang.ClassNotFoundException: poneytoponey.Identity (no security manager: RMI class loader disabled)
+```
+The solution is in the `justfile`, we have configured `CLASSPATH=app/bin/main/ rmiregistry 7000` to make sure it can find them.
 
 ## Game usage
 Once started, the game acts like a small shell, with a few commands to do the chat actions. This defines the available commands of our shell.

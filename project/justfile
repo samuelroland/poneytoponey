@@ -1,0 +1,6 @@
+# Start a RMI registry with the CLASSPATH variable defined
+# to the folder where we have .class files.
+# Otherwise, we'll get java.lang.ClassNotFoundException: poneytoponey.Identity (no security manager: RMI class loader disabled)
+rmi:
+    echo Starting Java RMI server, just hit Ctrl+c here to stop it.
+    CLASSPATH=app/bin/main/ rmiregistry 7000
