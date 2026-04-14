@@ -25,7 +25,7 @@
 
   #text(size: 14pt)[ASAD - 2026]
 
-  #text(size: 14pt)[Samuel Roland]
+  #text(size: 14pt)[Léna Beust, Kylian Manzini, Ileane Crocq, Samuel Roland]
 ]
 
 #outline(title: "Table of contents")
@@ -49,6 +49,22 @@
   image("requirements.svg"),
   caption: [Diagramme de requirements],
 )
+
+#figure(
+  image("dfd.svg"),
+  caption: [DFD TODO],
+)
+
+#figure(
+  image("deployement.svg"),
+  caption: [Diagramme de déploiement],
+)
+
+#figure(
+  image("component.svg"),
+  caption: [Diagramme de composants],
+)
+
 
 == Implémentation
 TODO ?
