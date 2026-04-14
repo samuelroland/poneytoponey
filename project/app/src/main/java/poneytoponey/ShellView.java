@@ -12,6 +12,15 @@ public class ShellView implements View {
     private boolean joinedNetwork;
     private HumanIdentity identity;
     private Scanner scanner = new Scanner(System.in);
+
+    // TODO: a refactor is needed here to avoid having 2 list of Chat !
+    // It seems we need to have easy access to recipient -> Chat here, but easy
+    // access of Uuid -> Chat in HumanIdentity.
+    // Maybe we should create getters/setter on HumanIdentity to keep the source of
+    // truth over there
+    // and create a mapping recipient -> Uuid here for ease of access and an
+    // O(log(N)) complexity to access a chat.
+    // This would also delete this attribute below
     private Map<String, Chat> chats = new HashMap<>();
 
     private void join(String username) {
