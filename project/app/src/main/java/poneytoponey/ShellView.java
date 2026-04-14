@@ -1,86 +1,276 @@
 package poneytoponey;
 
-import java.rmi.RemoteException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.UUID;
 
 public class ShellView implements View {
     private UUID currentChat;
+    private String currentChatRecipient;
     private boolean joinedNetwork;
     private HumanIdentity identity;
+    private Scanner scanner = new Scanner(System.in);
+    private Map<String, Chat> chats = new HashMap<>();
 
     private void join(String username) {
+        if (username == null || username.trim().isEmpty()) {
+            System.out.println("Username cannot be empty.");
+            return;
+        }
 
+        if (joinedNetwork) {
+            System.out.println("Already joined as " + identity.getUsername() + ".");
+            return;
+        }
+
+        this.identity = new HumanIdentity(username.trim());
+        this.joinedNetwork = true;
+        System.out.println("Joined network as " + username.trim() + ".");
     }
 
-    private void showHelp() {
-
+    public void showHelp() {
+        System.out.println("Available commands:");
+        System.out.println("  join <username>       - join the network as a user");
+        System.out.println("  list                  - list known participants");
+        System.out.println("  chat <recipient>      - create or switch to a chat");
+        System.out.println("  switch <recipient>    - switch to an existing chat");
+        System.out.println("  send <message>        - send a message to the active chat");
+        System.out.println("  history               - show chat history of current chat");
+        System.out.println("  close <recipient>     - close a chat with a recipient");
+        System.out.println("  refuse <recipient>    - refuse a chat request or discard a chat");
+        System.out.println("  status                - show current chat status");
+        System.out.println("  help                  - show this help text");
+        System.out.println("  exit | quit           - leave the shell");
     }
 
     private void createSwitchChat(String recipient) {
+        if (!joinedNetwork) {
+            System.out.println("You must join the network first.");
+            return;
+        }
 
+        if (recipient == null || recipient.trim().isEmpty()) {
+            System.out.println("Recipient cannot be empty.");
+            return;
+        }
+
+        recipient = recipient.trim();
+        Chat chat = chats.get(recipient);
+
+        if (chat == null) {
+            try {
+                chat = identity.createChat(recipient);
+            } catch (Exception e) {
+                System.out.println("Unable to create chat with " + recipient + ": " + e.getMessage());
+                return;
+            }
+            chats.put(recipient, chat);
+            System.out.println("Created chat with " + recipient + ".");
+        } else {
+            System.out.println("Switched to existing chat with " + recipient + ".");
+        }
+
+        this.currentChat = chat.getUuid();
+        this.currentChatRecipient = recipient;
     }
 
     private void closeChat(String recipient) {
+        if (recipient == null || recipient.trim().isEmpty()) {
+            System.out.println("Recipient cannot be empty.");
+            return;
+        }
 
+        recipient = recipient.trim();
+        Chat chat = chats.remove(recipient);
+
+        // TODO : Actually close the chat, waiting for imple
+        // Block sychronised ?
+
+        if (chat == null) {
+            System.out.println("No chat found with " + recipient + ".");
+            return;
+        }
+
+        if (recipient.equals(currentChatRecipient)) {
+            currentChat = null;
+            currentChatRecipient = null;
+        }
+
+        System.out.println("Closed chat with " + recipient + ".");
     }
 
     private void refuseChat(String recipient) {
+        if (recipient == null || recipient.trim().isEmpty()) {
+            System.out.println("Recipient cannot be empty.");
+            return;
+        }
 
+        recipient = recipient.trim();
+        if (chats.containsKey(recipient)) {
+            chats.remove(recipient);
+            if (recipient.equals(currentChatRecipient)) {
+                currentChat = null;
+                currentChatRecipient = null;
+            }
+            System.out.println("Refused chat with " + recipient + ".");
+        } else {
+            System.out.println("No chat request or chat found for " + recipient + ".");
+        }
     }
 
     private void sendMessage(String text) {
+        if (!joinedNetwork) {
+            System.out.println("You must join the network first.");
+            return;
+        }
 
+        if (currentChat == null || currentChatRecipient == null) {
+            System.out.println("No active chat selected. Use chat <recipient> first.");
+            return;
+        }
+
+        if (text == null || text.trim().isEmpty()) {
+            System.out.println("Cannot send an empty message.");
+            return;
+        }
+
+        Chat chat = chats.get(currentChatRecipient);
+        if (chat == null) {
+            System.out.println("Current chat is no longer available.");
+            currentChat = null;
+            currentChatRecipient = null;
+            return;
+        }
+
+        chat.insertNewMessage(text.trim(), identity.getUsername());
+        System.out.println("Sent message to " + currentChatRecipient + ": " + text.trim());
     }
 
     private void listParticipants() {
+        if (!joinedNetwork) {
+            System.out.println("You must join the network first.");
+            return;
+        }
 
+        String[] participants = identity.listParticipantsUsername();
+        if (participants.length == 0) {
+            System.out.println("No participants found.");
+            return;
+        }
+
+        System.out.println("Known participants:");
+        for (String participant : participants) {
+            System.out.println("  - " + participant);
+        }
     }
 
     private void waitWithShellPrompt() {
+        while (true) {
+            System.out.print("P2P> ");
+            String line = scanner.nextLine();
+            parseCommand(line);
+        }
     }
 
-    private void parseCommand() {
+    private void parseCommand(String line) {
+        if (line == null || line.trim().isEmpty()) {
+            return;
+        }
+
+        String[] tokens = line.trim().split(" ", 2);
+        String command = tokens[0].toLowerCase();
+        String argument = tokens.length > 1 ? tokens[1] : null;
+
+        switch (command) {
+            case "join" -> join(argument);
+            case "list" -> listParticipants();
+            case "chat" -> createSwitchChat(argument);
+            case "switch" -> {
+                if (argument == null || argument.trim().isEmpty()) {
+                    System.out.println("Usage: switch <recipient>");
+                } else if (!chats.containsKey(argument.trim())) {
+                    System.out.println("No existing chat with " + argument.trim() + ".");
+                } else {
+                    currentChatRecipient = argument.trim();
+                    currentChat = chats.get(currentChatRecipient).getUuid();
+                    System.out.println("Switched to chat with " + currentChatRecipient + ".");
+                }
+            }
+            case "send" -> sendMessage(argument);
+            case "history" -> showHistory();
+            case "close" -> closeChat(argument);
+            case "refuse" -> refuseChat(argument);
+            case "status" -> {
+                if (!joinedNetwork) {
+                    System.out.println("Not joined.");
+                } else if (currentChatRecipient == null) {
+                    System.out.println("Joined as " + identity.getUsername() + ". No active chat.");
+                } else {
+                    System.out.println(
+                            "Joined as " + identity.getUsername() + ". Active chat with " + currentChatRecipient + ".");
+                }
+            }
+            case "help" -> showHelp();
+            case "exit", "quit" -> {
+                System.out.println("Goodbye.");
+                System.exit(0);
+            }
+            default -> System.out.println("Unknown command: " + command + ". Type help for available commands.");
+        }
     }
 
     @Override
     public void start() {
         System.out.println("Welcome to the PoneyToPoney peer-to-peer system !");
-
-        // TODO: move this code inside join() when the commands parsing system work
-        // TODO: make sure that no other command can be run when we didn't joined the
-        // network
-
-        Scanner scanner = new Scanner(System.in);
         System.out.print("Please choose a username to join the network: ");
         String username = scanner.nextLine();
+        join(username);
 
-        this.identity = new HumanIdentity(username);
-        scanner.close();
+        showHelp();
+        waitWithShellPrompt();
     }
 
     @Override
     public void showChatRequest(String from) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'showChatRequest'");
+        System.out.println("Incoming chat request from " + from + ".");
     }
 
     @Override
     public void showChatClose(String from) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'showChatClose'");
+        System.out.println("Chat closed by " + from + ".");
     }
 
     @Override
     public void showChatRefuse(String from) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'showChatRefuse'");
+        System.out.println("Chat refused by " + from + ".");
     }
 
     @Override
     public void showChatMessage(String from) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'showChatMessage'");
+        System.out.println("New message available from " + from + ".");
+    }
+
+    private void showHistory() {
+        if (currentChatRecipient == null) {
+            System.out.println("No active chat. Use chat <recipient> to select a chat.");
+        } else {
+            Chat chat = chats.get(currentChatRecipient);
+            if (chat == null) {
+                System.out.println("Current chat is no longer available.");
+            } else {
+                List<Message> messages = chat.getMessages();
+                if (messages.isEmpty()) {
+                    System.out.println("No messages in chat with " + currentChatRecipient + ".");
+                } else {
+                    System.out.println("History for chat with " + currentChatRecipient + ":");
+                    for (Message message : messages) {
+                        System.out.println("  [" + message.getAuthor() + "] " + message.getTexte());
+                    }
+                }
+            }
+        }
     }
 
 }

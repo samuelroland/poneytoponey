@@ -41,4 +41,8 @@ public class Chat {
         return m;
     }
 
+    public List<Message> getMessages() {
+        return this.messages;
+    }
+
 }
