@@ -21,6 +21,7 @@ public class HumanIdentity implements Identity {
     private Map<UUID, Chat> chats; // ajoutés dans la liste par createChat ?
 
     private List<View> views;
+    private Registry remoteRegistry;
 
     public HumanIdentity(String user) {
         this.username = user;
