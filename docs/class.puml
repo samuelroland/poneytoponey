@@ -15,6 +15,7 @@ interface View {
     showChatRequest(from: String)
     showChatClose(from: String)
     showChatRefuse(from: String)
+    showChatMessage(message: String)
 }
 
 class ShellView implements View {
@@ -36,6 +37,7 @@ class Chat {
     -approved: bool
     +getUuid(): Uuid
     +getApproved(): bool
+    +setApproved(state: bool)
 }
 
 interface Identity extends Remote {
@@ -58,7 +60,7 @@ class HumanIdentity implements Identity {
     +closeChat(chatId: Uuid)
 }
 
-HumanIdentity "1"-"*" Chat: manage >
+HumanIdentity "1"-l---"*" Chat: "     manage    >"
 HumanIdentity "*"-l-"*" HumanIdentity: remotely discuss with >
 HumanIdentity "1"-"0..1" View: send event to >
 HumanIdentity "1"-u--"*" Identity: keep known participants \nin cache by username <
