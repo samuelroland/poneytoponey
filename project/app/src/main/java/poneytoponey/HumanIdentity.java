@@ -1,5 +1,6 @@
 package poneytoponey;
 
+import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 
 import java.rmi.registry.LocateRegistry;
@@ -10,8 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.swing.text.View;
 
+import java.rmi.server.UnicastRemoteObject;
 import java.sql.Timestamp;
 
 public class HumanIdentity implements Identity {
