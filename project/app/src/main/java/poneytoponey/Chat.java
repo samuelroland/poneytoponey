@@ -24,4 +24,8 @@ public class Chat {
         return this.approved;
     }
 
+    public void setApproved(boolean t) { // est ce que ca dérange si j'ajoute ca
+        this.approved = t;
+    }
+
 }
