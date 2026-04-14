@@ -8,4 +8,6 @@ public interface View {
     void showChatClose(String from);
 
     void showChatRefuse(String from);
+
+    void showChatMessage(String from);
 }

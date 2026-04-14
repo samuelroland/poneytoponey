@@ -77,4 +77,10 @@ public class ShellView implements View {
         throw new UnsupportedOperationException("Unimplemented method 'showChatRefuse'");
     }
 
+    @Override
+    public void showChatMessage(String from) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'showChatMessage'");
+    }
+
 }
