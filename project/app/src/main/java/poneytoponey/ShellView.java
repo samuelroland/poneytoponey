@@ -26,6 +26,7 @@ public class ShellView implements View {
         }
 
         this.identity = new HumanIdentity(username.trim());
+        this.identity.subscribeViewForChatEvent(this);
         this.joinedNetwork = true;
         System.out.println("Joined network as " + username.trim() + ".");
     }

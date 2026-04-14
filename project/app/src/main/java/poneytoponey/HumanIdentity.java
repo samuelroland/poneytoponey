@@ -86,7 +86,7 @@ public class HumanIdentity implements Identity {
         }
     }
 
-    private void subscribeViewForChatEvent(View view) {
+    public void subscribeViewForChatEvent(View view) {
         this.views.add(view);
     }
 
