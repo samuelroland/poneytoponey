@@ -62,9 +62,13 @@ public class HumanIdentity implements Identity {
         }
     }
 
-    public Chat createChat(String recipient) throws RemoteException {
+    public Chat createChat(String recipient) throws RemoteException, Exception {
+        if (!listParticipantsUsername().contains(recipient)) {
+            throw new Exception("This participant doesn't exist in the network !");
+        }
         Chat chat = new Chat(recipient);
-        // TODO: manage remote chat creation !
+        Identity remote = (Identity) this.remoteRegistry.lookup(recipient);
+        remote.remoteAskForChat(this.username, chat.getUuid());
         return chat;
     }
 
