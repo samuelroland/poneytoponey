@@ -6,6 +6,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -50,12 +51,14 @@ public class HumanIdentity implements Identity {
         return this.chats.values();
     }
 
-    public String[] listParticipantsUsername() {
+    public List<String> listParticipantsUsername() {
         // We only have Identity objects published under their username for now
+        // If we publish other types of objects, we may need to prefix them and remove
+        // these prefixes here after filter.
         try {
-            return this.remoteRegistry.list();
+            return Arrays.asList(this.remoteRegistry.list());
         } catch (Exception e) {
-            return new String[0];
+            return new ArrayList<>();
         }
     }
 

@@ -154,8 +154,8 @@ public class ShellView implements View {
             return;
         }
 
-        String[] participants = identity.listParticipantsUsername();
-        if (participants.length == 0) {
+        List<String> participants = identity.listParticipantsUsername();
+        if (participants.isEmpty()) {
             System.out.println("No participants found.");
             return;
         }
