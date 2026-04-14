@@ -82,12 +82,21 @@ public class HumanIdentity implements Identity {
         Chat chat = chats.get(chatID);
         if (chat != null) {
             chat.setApproved(true);
-            // utilisation de remote registry pour notifier
             Identity remote = getRemoteIdentityFromChat(chatID);
             if (remote != null) {
                 remote.remoteApproveBackChat(chatID);
             }
             // notifyViewsChatOpened(chatID);
+        }
+    }
+
+    public void refuseChat(UUID oldChatID) throws RemoteException {
+        Chat chat = chats.get(oldChatID);
+        if (chat != null) {
+            Identity remote = getRemoteIdentityFromChat(oldChatID);
+            if (remote != null) {
+                remote.remoteRefuseChat(oldChatID);
+            }
         }
     }
 
@@ -187,4 +196,5 @@ public class HumanIdentity implements Identity {
         chat.setApproved(false); // pertinent à faire? ou aucun sens ?
         // est ce que y a d'autres à faire ? détruire Chat?
     }
+
 }

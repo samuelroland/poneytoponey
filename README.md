@@ -16,8 +16,9 @@ just rmi
 Then you can start one client with
 ```sh
 cd project
-gradle run
+just client
 ```
+
 If you don't have gradle installed, you can use the gradle wrapper `gradlew`:
 ```sh
 cd project

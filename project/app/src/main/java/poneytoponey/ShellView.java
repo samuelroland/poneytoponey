@@ -1,5 +1,6 @@
 package poneytoponey;
 
+import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -120,10 +121,16 @@ public class ShellView implements View {
 
         if (chats.get(recipient) != null) {
             Chat existingChat = chats.get(recipient);
+            try {
+                identity.approveChat(existingChat.getUuid());
+            } catch (RemoteException e) {
+                System.out.println("Failed to approve chat with " + recipient + e.getMessage());
+                return;
+            }
             existingChat.setApproved(true);
             currentChat = existingChat.getUuid();
             currentChatRecipient = existingChat.getOtherUsername();
-            System.out.println("Approved chat with " + recipient + ".");
+            System.out.println("Approved chat with " + recipient + ". Start chatting now !");
         } else {
             System.out.println("No requested chat with " + recipient + ", you cannot approve an non existant chat.");
         }
@@ -136,8 +143,19 @@ public class ShellView implements View {
         }
 
         recipient = recipient.trim();
-        if (chats.containsKey(recipient)) {
+        Chat maybeChat = chats.get(recipient);
+        if (maybeChat != null) {
+            UUID oldChatID = maybeChat.getUuid();
             chats.remove(recipient);
+
+            try {
+                identity.refuseChat(oldChatID);
+            } catch (RemoteException e) {
+                System.out.println("Failed to refuse chat with " + recipient +
+                        e.getMessage());
+                return;
+            }
+
             if (recipient.equals(currentChatRecipient)) {
                 currentChat = null;
                 currentChatRecipient = null;
