@@ -241,6 +241,11 @@ public class ShellView implements View {
     @Override
     public void showChatClose(String from) {
         System.out.println("Chat closed by " + from + ".");
+
+    @Override
+    public void showChatApprobation(String from) {
+        System.out.println("Chat request approved by " + from + ".");
+        showPrompt();
     }
 
     @Override
