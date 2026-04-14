@@ -1,6 +1,7 @@
 package poneytoponey;
 
 import java.rmi.AlreadyBoundException;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
 import java.rmi.registry.LocateRegistry;
@@ -119,28 +120,30 @@ public class HumanIdentity implements Identity {
     }
 
     // ----- Identity -----
-    public void remoteAskForChat(String author, UUID chatId) {
-        Identity authorIdentity = knownParticipants.get(author);
-
+    public void remoteAskForChat(String author, UUID chatId) throws RemoteException, NotBoundException {
+        knownParticipants.put(author, (Identity) remoteRegistry.lookup(author));
+        chats.put(chatId, new Chat(author, chatId)); // save the non approved chat
         for (View view : views) {
             view.showChatRequest(author);
         }
     }
 
-    public void remoteApproveBackChat(UUID chatId) {
+    public void remoteApproveBackChat(UUID chatId) throws RemoteException {
         Chat chat = chats.get(chatId);
 
-        if (chat == null) {
-            String otherUsername = this.chats.get(chatId).getOtherUsername();
-            chat = new Chat(otherUsername);
+        if (chat != null) {
+            String otherUsername = chat.getOtherUsername();
             chats.put(chat.getUuid(), chat);
+            chat.setApproved(true);
+            for (View view : views) {
+                view.showChatApprobation(otherUsername);
+            }
+        } else {
+            throw new RemoteException("The chat with ID " + chatId + " doesn't exist on client '" + username
+                    + "' and cannot be approved. It was either closed before or never requested...");
         }
-
-        chat.setApproved(true);
-
-        for (View view : views) {
-            // view.start(this);
-        }
+        // TODO: do we agree we should just throw a RemoteException right ?? there is
+        // not chat to approve this is an error.
     }
 
     public void remoteRefuseChat(UUID chatId) {
