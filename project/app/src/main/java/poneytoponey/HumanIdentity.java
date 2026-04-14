@@ -34,10 +34,8 @@ public class HumanIdentity implements Identity {
 
             this.remoteRegistry.bind(user, stub);
         } catch (AlreadyBoundException e) {
-            System.err.println("A username already exists in the network...");
             System.err.println(e.getMessage());
         } catch (RemoteException e) {
-            System.err.println("Cannot connect to RMI registry on port " + poneytoponey.App.PORT);
             System.err.println(e.getMessage());
         }
     }
