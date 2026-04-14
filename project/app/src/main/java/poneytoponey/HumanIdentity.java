@@ -12,14 +12,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-
 import java.rmi.server.UnicastRemoteObject;
 import java.sql.Timestamp;
 
 public class HumanIdentity implements Identity {
 
     private String username;
-    private Map<String, Identity> knownParticipants; // cache
+    private Map<String, Identity> knownParticipants; // cache or remote Identity indexed by username
     private Map<UUID, Chat> chats; // ajoutés dans la liste par createChat ?
 
     private List<View> views;
@@ -31,9 +30,11 @@ public class HumanIdentity implements Identity {
         this.chats = new HashMap<>();
         this.knownParticipants = new HashMap<>();
         try {
+            // Try joining the network by publishing the current object to the RMI registry
             this.remoteRegistry = LocateRegistry.getRegistry(poneytoponey.App.PORT);
+            // We have to publish this object fist before binding it to the registry
+            // Note: the port 0 lets the java RMI systems choose a random client port
             Identity stub = (Identity) UnicastRemoteObject.exportObject(this, 0);
-
             this.remoteRegistry.bind(user, stub);
         } catch (AlreadyBoundException e) {
             System.err.println(e.getMessage());
@@ -59,10 +60,15 @@ public class HumanIdentity implements Identity {
         }
     }
 
-    public Chat createChat() throws RemoteException {
-        Chat chat = new Chat();
+    public Chat createChat(String recipient) throws RemoteException {
+        Chat chat = new Chat(recipient);
         // TODO: manage remote chat creation !
         return chat;
+    }
+
+    private Identity getRemoteIdentityFromChat(UUID chatID) {
+        String otherUsername = this.chats.get(chatID).getOtherUsername();
+        return knownParticipants.get(otherUsername);
     }
 
     public void approveChat(UUID chatID) throws RemoteException {
@@ -70,7 +76,7 @@ public class HumanIdentity implements Identity {
         if (chat != null) {
             chat.setApproved(true);
             // utilisation de remote registry pour notifier
-            Identity remote = findRemoteFromChat(chatID);
+            Identity remote = getRemoteIdentityFromChat(chatID);
             if (remote != null) {
                 remote.remoteApproveBackChat(chatID);
             }
@@ -83,22 +89,20 @@ public class HumanIdentity implements Identity {
     }
 
     private void sendMessage(UUID chatID, String text) throws RemoteException {
-        Identity remote = findRemoteFromChat(chatID);
+        Identity remote = getRemoteIdentityFromChat(chatID);
         Chat chat = chats.get(chatID);
         if (chat != null && chat.getApproved() && text != null) {
-            Timestamp ts = new Timestamp(System.currentTimeMillis());
+            Message m = chat.insertNewMessage(text, this.username);
             if (remote != null) {
-                remote.sendMessage(chatID, text, ts);
+                remote.remoteSendMessageInChat(chatID, m.getTexte(), m.getSenderTimestamp());
             }
-            Message m = new Message(text, ts, chat.messages.size(), this.username);
-            chat.messages.add(m);
             // notifyViewsMessage(chatID,m);
         }
 
     }
 
     private void closeChat(UUID chatID) throws RemoteException {
-        Identity remote = findRemoteFromChat(chatID);
+        Identity remote = getRemoteIdentityFromChat(chatID);
         if (chats.containsKey(chatID)) {
             chats.remove(chatID);
         }
@@ -121,14 +125,15 @@ public class HumanIdentity implements Identity {
         Chat chat = chats.get(chatId);
 
         if (chat == null) {
-            chat = new Chat();
+            String otherUsername = this.chats.get(chatId).getOtherUsername();
+            chat = new Chat(otherUsername);
             chats.put(chat.getUuid(), chat);
         }
 
         chat.setApproved(true);
 
         for (View view : views) {
-            view.start(this);
+            // view.start(this);
         }
     }
 
@@ -145,7 +150,7 @@ public class HumanIdentity implements Identity {
 
     }
 
-    public void remoteSendMessageInChat(UUID chatId) {
+    public void remoteSendMessageInChat(UUID chatId, String text, Timestamp senderTimestamp) {
         Chat chat = chats.get(chatId);
 
         if (chat == null) {
@@ -170,7 +175,7 @@ public class HumanIdentity implements Identity {
         }
 
         chats.remove(chatId);
-        chat.setApproved(false); // pertinent à faire? ou aucun sens ? 
+        chat.setApproved(false); // pertinent à faire? ou aucun sens ?
         // est ce que y a d'autres à faire ? détruire Chat?
     }
 }
