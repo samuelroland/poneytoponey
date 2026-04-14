@@ -120,16 +120,16 @@ public class HumanIdentity implements Identity {
     }
 
     // ----- Identity -----
-    public void remoteAskForChat(String author, UUID chatId) throws RemoteException, NotBoundException {
+    public void remoteAskForChat(String author, UUID chatID) throws RemoteException, NotBoundException {
         knownParticipants.put(author, (Identity) remoteRegistry.lookup(author));
-        chats.put(chatId, new Chat(author, chatId)); // save the non approved chat
+        chats.put(chatID, new Chat(author, chatID)); // save the non approved chat
         for (View view : views) {
             view.showChatRequest(author);
         }
     }
 
-    public void remoteApproveBackChat(UUID chatId) throws RemoteException {
-        Chat chat = chats.get(chatId);
+    public void remoteApproveBackChat(UUID chatID) throws RemoteException {
+        Chat chat = chats.get(chatID);
 
         if (chat != null) {
             String otherUsername = chat.getOtherUsername();
@@ -139,15 +139,15 @@ public class HumanIdentity implements Identity {
                 view.showChatApprobation(otherUsername);
             }
         } else {
-            throw new RemoteException("The chat with ID " + chatId + " doesn't exist on client '" + username
+            throw new RemoteException("The chat with ID " + chatID + " doesn't exist on client '" + username
                     + "' and cannot be approved. It was either closed before or never requested...");
         }
         // TODO: do we agree we should just throw a RemoteException right ?? there is
         // not chat to approve this is an error.
     }
 
-    public void remoteRefuseChat(UUID chatId) {
-        Chat chat = chats.get(chatId);
+    public void remoteRefuseChat(UUID chatID) {
+        Chat chat = chats.get(chatID);
 
         if (chat == null) {
             return; // à revoir
@@ -159,8 +159,8 @@ public class HumanIdentity implements Identity {
 
     }
 
-    public void remoteSendMessageInChat(UUID chatId, String text, long senderTimestamp) {
-        Chat chat = chats.get(chatId);
+    public void remoteSendMessageInChat(UUID chatID, String text, long senderTimestamp) {
+        Chat chat = chats.get(chatID);
 
         if (chat == null) {
             return; // à revoir
@@ -172,8 +172,8 @@ public class HumanIdentity implements Identity {
 
     }
 
-    public void remoteCloseChat(UUID chatId) {
-        Chat chat = chats.get(chatId);
+    public void remoteCloseChat(UUID chatID) {
+        Chat chat = chats.get(chatID);
 
         if (chat == null) {
             return; // à revoir
@@ -183,7 +183,7 @@ public class HumanIdentity implements Identity {
             view.showChatClose(this.username);
         }
 
-        chats.remove(chatId);
+        chats.remove(chatID);
         chat.setApproved(false); // pertinent à faire? ou aucun sens ?
         // est ce que y a d'autres à faire ? détruire Chat?
     }

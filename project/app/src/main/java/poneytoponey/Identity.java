@@ -7,13 +7,13 @@ import java.util.UUID;
 
 public interface Identity extends Remote {
 
-    public void remoteAskForChat(String author, UUID chatId) throws RemoteException, NotBoundException;
+    public void remoteAskForChat(String author, UUID chatID) throws RemoteException, NotBoundException;
 
-    public void remoteApproveBackChat(UUID chatId) throws RemoteException;
+    public void remoteApproveBackChat(UUID chatID) throws RemoteException;
 
-    public void remoteRefuseChat(UUID chatId) throws RemoteException;
+    public void remoteRefuseChat(UUID chatID) throws RemoteException;
 
-    public void remoteSendMessageInChat(UUID chatId, String text, long sender) throws RemoteException;
+    public void remoteSendMessageInChat(UUID chatID, String text, long sender) throws RemoteException;
 
-    public void remoteCloseChat(UUID chatId) throws RemoteException;
+    public void remoteCloseChat(UUID chatID) throws RemoteException;
 }
