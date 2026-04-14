@@ -65,6 +65,10 @@
   caption: [Diagramme de composants],
 )
 
+#figure(
+  image("sequence.svg"),
+  caption: [Diagramme de séquence],
+)
 
 == Implémentation
 TODO ?

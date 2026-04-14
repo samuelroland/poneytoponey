@@ -1,0 +1,33 @@
+@startuml sequence
+title "Diagramme de sequence"
+participant "m1" as m1
+participant "m2" as m2
+participant "registry" as registry
+
+m1->registry:Je publie mon identity pour rejoindre le réseau
+m1-> registry: Je demande la liste des utilisateurs 
+registry-->m1:Envoie la liste des noms des membres courants du réseau
+m1->m2:demande de créer un nouveau chat
+alt Demande refusée
+m2-->m1:Je refuse
+else Demande acceptée mais annulée par timeout
+m1-> m1: Timeout expiré
+m2-->m1: J'accepte
+m1->m2: Je ferme le chat
+else Demande acceptée
+m2-->m1:J'accepte
+m1->m1:Etablissement du chat
+m2->m2:Etablissement du chat
+m1->m2:Envoi message
+m2->m1:Envoi d'un autre message
+alt Conversation terminée par commande
+    m1->m2:Annonce fermeture du chat
+    m1->m1:Fermeture du chat
+    m2->m2:Fermeture du chat
+else Conversation terminée par déconnexion imprévue
+    m1->m1:Fermeture du chat
+    m2->m1:Envoi message
+    m2->m2:Fermeture du chat (absence de confirmation de récéption)
+end
+end
+@enduml sequence
