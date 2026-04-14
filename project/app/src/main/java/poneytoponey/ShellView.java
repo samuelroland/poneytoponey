@@ -102,6 +102,24 @@ public class ShellView implements View {
         System.out.println("Closed chat with " + recipient + ".");
     }
 
+    private void approveChat(String recipient) {
+        recipient = recipient.trim();
+        if (recipient == null || recipient.isEmpty()) {
+            System.out.println("Recipient cannot be empty.");
+            return;
+        }
+
+        if (chats.get(recipient) != null) {
+            Chat existingChat = chats.get(recipient);
+            existingChat.setApproved(true);
+            currentChat = existingChat.getUuid();
+            currentChatRecipient = existingChat.getOtherUsername();
+            System.out.println("Approved chat with " + recipient + ".");
+        } else {
+            System.out.println("No requested chat with " + recipient + ", you cannot approve an non existant chat.");
+        }
+    }
+
     private void refuseChat(String recipient) {
         if (recipient == null || recipient.trim().isEmpty()) {
             System.out.println("Recipient cannot be empty.");
@@ -206,6 +224,7 @@ public class ShellView implements View {
             case "send" -> sendMessage(argument);
             case "history" -> showHistory();
             case "close" -> closeChat(argument);
+            case "approve" -> approveChat(argument);
             case "refuse" -> refuseChat(argument);
             case "status" -> {
                 if (!joinedNetwork) {
