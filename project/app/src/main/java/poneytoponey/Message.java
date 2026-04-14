@@ -4,11 +4,11 @@ import java.sql.Timestamp;
 
 public class Message {
 
-    protected String texte;
-    protected Timestamp senderTimestamp;
-    protected Integer index;
+    private String texte;
+    private Timestamp senderTimestamp;
+    private Integer index;
     // c'est bien integer ou int ?
-    protected String author;
+    private String author;
 
     public Message(String texte, Timestamp senderTimestamp, Integer index, String author) {
         this.texte = texte;

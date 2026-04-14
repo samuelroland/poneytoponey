@@ -15,6 +15,7 @@ import javax.swing.text.View;
 import java.sql.Timestamp;
 
 public class HumanIdentity implements Identity {
+
     private String username;
     private Map<String, Identity> knownParticipants; // cache
     private Map<UUID, Chat> chats; // ajoutés dans la liste par createChat ?
@@ -35,7 +36,7 @@ public class HumanIdentity implements Identity {
             // utilisation de remote registry pour notifier
             Identity remote = findRemoteFromChat(chatID);
             if (remote != null) {
-                remote.remoteapproveBackChat(chatID);
+                remote.remoteApproveBackChat(chatID);
             }
             // notifyViewsChatOpened(chatID);
         }
@@ -69,5 +70,71 @@ public class HumanIdentity implements Identity {
             remote.remoteCloseChat(chatID);
             // chat.show(chatclose()) //mais comment savoir quel chat
         }
+    }
+
+    // ----- Identity -----
+    public void remoteAskForChat(String author, UUID chatId) {
+        Identity authorIdentity = knownParticipants.get(author);
+
+        for (View view : views) {
+            view.showChatRequest(author);
+        }
+    }
+
+    public void remoteApproveBackChat(UUID chatId) {
+        Chat chat = chats.get(chatId);
+
+        if (chat == null) {
+            chat = new Chat();
+            chats.put(chat.getUuid(), chat);
+        }
+
+        chat.setApproved(true);
+
+        for (View view : views) {
+            view.start(this);
+        }
+    }
+
+    public void remoteRefuseChat(UUID chatId) {
+        Chat chat = chats.get(chatId);
+
+        if (chat == null) {
+            return; // à revoir
+        }
+
+        for (View view : views) {
+            view.showChatRefuse(this.username);
+        }
+
+    }
+
+    public void remoteSendMessageInChat(UUID chatId) {
+        Chat chat = chats.get(chatId);
+
+        if (chat == null) {
+            return; // à revoir
+        }
+
+        for (View view : views) {
+            view.showChatMessage(this.username); // j'ai l'impression que cette méthode manque au diagramme de classe...
+        }
+
+    }
+
+    public void remoteCloseChat(UUID chatId) {
+        Chat chat = chats.get(chatId);
+
+        if (chat == null) {
+            return; // à revoir
+        }
+
+        for (View view : views) {
+            view.showChatClose(this.username);
+        }
+
+        chats.remove(chatId);
+        chat.setApproved(false); // pertinent à faire? ou aucun sens ? 
+        // est ce que y a d'autres à faire ? détruire Chat?
     }
 }
