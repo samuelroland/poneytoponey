@@ -6,6 +6,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,29 @@ public class HumanIdentity implements Identity {
         } catch (RemoteException e) {
             System.err.println(e.getMessage());
         }
+    }
+
+    public String getUsername() {
+        return this.username;
+    }
+
+    public Collection<Chat> getChats() {
+        return this.chats.values();
+    }
+
+    public String[] listParticipantsUsername() {
+        // We only have Identity objects published under their username for now
+        try {
+            return this.remoteRegistry.list();
+        } catch (Exception e) {
+            return new String[0];
+        }
+    }
+
+    public Chat createChat() throws RemoteException {
+        Chat chat = new Chat();
+        // TODO: manage remote chat creation !
+        return chat;
     }
 
     public void approveChat(UUID chatID) throws RemoteException {
