@@ -11,8 +11,14 @@ public class Chat {
     private List<Message> messages;
     private String otherUsername; // the username of the remote client
 
+    // When creating a Chat locally
     public Chat(String otherUsername) {
-        this.uuid = UUID.randomUUID();
+        this(otherUsername, UUID.randomUUID());
+    }
+
+    // When receiving a chat ID from a remote client
+    public Chat(String otherUsername, UUID existingChatID) {
+        this.uuid = existingChatID;
         this.approved = false;
         this.messages = new ArrayList<>();
         this.otherUsername = otherUsername;
