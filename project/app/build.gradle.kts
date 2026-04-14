@@ -41,3 +41,8 @@ tasks.named<Test>("test") {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
 }
+
+// Do not close stdin stream, otherwise we'll get Scanner.nextLine() will fail to read input.
+tasks.named<JavaExec>("run") {
+    standardInput = System.`in`
+}
