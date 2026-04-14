@@ -7,8 +7,12 @@ A peer-to-peer chat system, with simple direct conversations (2 persons). The in
 - [docs/brainstorm.md](docs/brainstorm.md)
 
 ## Usage
+Start an RMI registry with port 7000.
+```sh
+rmiregistry 7000
+```
 
-Just run
+Then you can start one client with
 ```sh
 cd project
 gradle run

@@ -1,10 +1,13 @@
 package poneytoponey;
 
+import java.rmi.RemoteException;
+import java.util.Scanner;
 import java.util.UUID;
 
 public class ShellView implements View {
     private UUID currentChat;
     private boolean joinedNetwork;
+    private HumanIdentity identity;
 
     private void join(String username) {
 
@@ -41,9 +44,24 @@ public class ShellView implements View {
     }
 
     @Override
-    public void start(HumanIdentity humanIdentity) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'start'");
+    public void start() {
+        System.out.println("Welcome to the PoneyToPoney peer-to-peer system !");
+
+        // TODO: move this code inside join() when the commands parsing system work
+        // TODO: make sure that no other command can be run when we didn't joined the
+        // network
+
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Please choose a username to join the network: ");
+        String username = scanner.nextLine();
+
+        try {
+            this.identity = new HumanIdentity(username);
+        } catch (RemoteException e) {
+            System.err.println("A username already exists in the network...");
+            System.err.println(e.getMessage());
+        }
+        scanner.close();
     }
 
     @Override

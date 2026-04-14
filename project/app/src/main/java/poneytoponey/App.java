@@ -3,12 +3,13 @@
 */
 package poneytoponey;
 
+import java.rmi.registry.*;
+
 public class App {
-    public String getGreeting() {
-        return "Hello World!";
-    }
+    public static final int PORT = 7000;
 
     public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+        ShellView view = new ShellView();
+        view.start();
     }
 }
