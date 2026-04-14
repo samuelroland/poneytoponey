@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import java.rmi.server.UnicastRemoteObject;
-import java.sql.Timestamp;
 
 public class HumanIdentity implements Identity {
 

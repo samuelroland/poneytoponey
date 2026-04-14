@@ -31,18 +31,18 @@ public class ShellView implements View {
     }
 
     public void showHelp() {
-        System.out.println("Available commands:");
-        System.out.println("  join <username>       - join the network as a user");
-        System.out.println("  list                  - list known participants");
-        System.out.println("  chat <recipient>      - create or switch to a chat");
-        System.out.println("  switch <recipient>    - switch to an existing chat");
-        System.out.println("  send <message>        - send a message to the active chat");
-        System.out.println("  history               - show chat history of current chat");
-        System.out.println("  close <recipient>     - close a chat with a recipient");
-        System.out.println("  refuse <recipient>    - refuse a chat request or discard a chat");
-        System.out.println("  status                - show current chat status");
-        System.out.println("  help                  - show this help text");
-        System.out.println("  exit | quit           - leave the shell");
+        System.out.println("Available commands:"
+                + "\n  join <username>       - join the network as a user"
+                + "\n  list                  - list known participants"
+                + "\n  chat <recipient>      - create or switch to a chat"
+                + "\n  switch <recipient>    - switch to an existing chat"
+                + "\n  send <message>        - send a message to the active chat"
+                + "\n  history               - show chat history of current chat"
+                + "\n  close <recipient>     - close a chat with a recipient"
+                + "\n  refuse <recipient>    - refuse a chat request or discard a chat"
+                + "\n  status                - show current chat status"
+                + "\n  help                  - show this help text"
+                + "\n  exit | quit           - leave the shell");
     }
 
     private void createSwitchChat(String recipient) {
