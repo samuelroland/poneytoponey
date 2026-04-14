@@ -167,9 +167,13 @@ public class ShellView implements View {
         }
     }
 
+    private void showPrompt() {
+        System.out.print("P2P> ");
+    }
+
     private void waitWithShellPrompt() {
         while (true) {
-            System.out.print("P2P> ");
+            showPrompt();
             String line = scanner.nextLine();
             parseCommand(line);
         }
@@ -236,11 +240,14 @@ public class ShellView implements View {
     @Override
     public void showChatRequest(String from) {
         System.out.println("Incoming chat request from " + from + ".");
+        showPrompt();
     }
 
     @Override
     public void showChatClose(String from) {
         System.out.println("Chat closed by " + from + ".");
+        showPrompt();
+    }
 
     @Override
     public void showChatApprobation(String from) {
@@ -251,11 +258,13 @@ public class ShellView implements View {
     @Override
     public void showChatRefuse(String from) {
         System.out.println("Chat refused by " + from + ".");
+        showPrompt();
     }
 
     @Override
     public void showChatMessage(String from) {
         System.out.println("New message available from " + from + ".");
+        showPrompt();
     }
 
     private void showHistory() {
