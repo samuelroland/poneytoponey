@@ -1,5 +1,6 @@
 package poneytoponey;
 
+import java.net.InetAddress;
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -21,22 +22,31 @@ public class HumanIdentity implements Identity {
     private String username;
     private Map<String, Identity> knownParticipants; // cache or remote Identity indexed by username
     private Map<UUID, Chat> chats; // ajoutés dans la liste par createChat ?
-
+    private Directory directory;
     private List<View> views;
-    private Registry remoteRegistry;
+    private Registry ourLocalRegistry;
 
-    public HumanIdentity(String user, String host) {
+    public HumanIdentity(String user, Directory directory) {
+        this.directory = directory;
         this.username = user;
         this.views = new ArrayList<>();
         this.chats = new HashMap<>();
         this.knownParticipants = new HashMap<>();
         try {
-            // Try joining the network by publishing the current object to the RMI registry
-            this.remoteRegistry = LocateRegistry.getRegistry(host, poneytoponey.App.PORT);
+            // Try joining the network by publishing the current object to the our local RMI
+            // registry
+            ourLocalRegistry = LocateRegistry.createRegistry(poneytoponey.App.PORT);
             // We have to publish this object fist before binding it to the registry
             // Note: the port 0 lets the java RMI systems choose a random client port
             Identity stub = (Identity) UnicastRemoteObject.exportObject(this, 0);
-            this.remoteRegistry.bind(user, stub);
+            ourLocalRegistry.bind(user, stub);
+            try {
+                InetAddress ip = InetAddress.getLocalHost();
+                this.directory.join(new Entry(username, ip.getHostAddress()));
+            } catch (Exception e) {
+                System.err.println("Cannot get current local IP address");
+                return;
+            }
         } catch (AlreadyBoundException e) {
             System.err.println(e.getMessage());
         } catch (RemoteException e) {

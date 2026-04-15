@@ -25,7 +25,7 @@ public class ShellView implements View {
     // This would also delete this attribute below
     private Map<String, Chat> chats = new HashMap<>();
 
-    private void join(String username) {
+    private void join(String username, String directoryHost) {
         if (username == null || username.trim().isEmpty()) {
             System.out.println("Username cannot be empty.");
             return;
@@ -36,7 +36,7 @@ public class ShellView implements View {
             return;
         }
 
-        this.identity = new HumanIdentity(username.trim(), host);
+        this.identity = new HumanIdentity(username.trim(), new Directory(directoryHost));
         this.identity.subscribeViewForChatEvent(this);
         this.joinedNetwork = true;
         System.out.println("Joined network as " + username.trim() + ".");
