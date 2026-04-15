@@ -9,7 +9,6 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -214,5 +213,15 @@ public class HumanIdentity implements Identity {
 
     public void removeTOChats(UUID uuid) {
         this.chats.remove(uuid);
+    }
+
+    //-----pour trouver le uuid du récipient : chercher dans la liste de tous les chats que l'on en vérifiant la condition chat.username == l'username recherché-----
+    public UUID findUuidByUsername(String recipientUsername){
+        for (Chat chat : this.chats.values()) {
+            if(chat.getOtherUsername().equals(recipientUsername)){
+                return chat.getUuid();
+            }
+        }
+        return null;
     }
 }
