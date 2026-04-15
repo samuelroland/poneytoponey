@@ -13,9 +13,10 @@ build:
 client ip:
     echo Starting another client !
     just build
-    java -classpath app/src/main/java/build poneytoponey.App {{ip}}
+    java -classpath app/src/main/java/build poneytoponey.App http://{{ip}}:8080
 
 directory:
     echo Starting the directory server !
     just build
     java -classpath app/src/main/java/build directory.DirectoryServer
+

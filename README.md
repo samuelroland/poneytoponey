@@ -6,6 +6,30 @@ A peer-to-peer chat system, with simple direct conversations (2 persons). The in
 ## Important files
 - [docs/brainstorm.md](docs/brainstorm.md)
 
+## Local setup
+
+```sh
+cd project
+docker compose up # make sure everything is running
+```
+
+The directory is not running !
+
+Open one terminal to start a new client
+
+```sh
+docker compose exec client1 bash
+# Inside the opened shell, start a new client with hostname of the directory just "directory"
+just client directory
+```
+
+Open another terminal to start a new client
+```sh
+docker compose exec client2 bash
+# Inside the opened shell, start a new client with hostname of the directory just "directory"
+just client directory
+```
+
 ## Usage
 
 Start a (unique) directory server with port 8080.
