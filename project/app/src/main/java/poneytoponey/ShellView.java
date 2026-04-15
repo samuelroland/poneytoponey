@@ -13,6 +13,7 @@ public class ShellView implements View {
     private boolean joinedNetwork;
     private HumanIdentity identity;
     private Scanner scanner = new Scanner(System.in);
+    private String host;
 
     // TODO: a refactor is needed here to avoid having 2 list of Chat !
     // It seems we need to have easy access to recipient -> Chat here, but easy
@@ -35,7 +36,7 @@ public class ShellView implements View {
             return;
         }
 
-        this.identity = new HumanIdentity(username.trim());
+        this.identity = new HumanIdentity(username.trim(), host);
         this.identity.subscribeViewForChatEvent(this);
         this.joinedNetwork = true;
         System.out.println("Joined network as " + username.trim() + ".");
@@ -273,7 +274,8 @@ public class ShellView implements View {
     }
 
     @Override
-    public void start() {
+    public void start(String host) {
+        this.host = host;
         System.out.println("Welcome to the PoneyToPoney peer-to-peer system !");
         System.out.print("Please choose a username to join the network: ");
         String username = scanner.nextLine();

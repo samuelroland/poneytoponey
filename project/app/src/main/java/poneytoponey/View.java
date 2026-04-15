@@ -1,7 +1,7 @@
 package poneytoponey;
 
 public interface View {
-    void start();
+    void start(String host);
 
     void showChatRequest(String from);
 

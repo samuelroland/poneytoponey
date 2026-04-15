@@ -25,14 +25,14 @@ public class HumanIdentity implements Identity {
     private List<View> views;
     private Registry remoteRegistry;
 
-    public HumanIdentity(String user) {
+    public HumanIdentity(String user, String host) {
         this.username = user;
         this.views = new ArrayList<>();
         this.chats = new HashMap<>();
         this.knownParticipants = new HashMap<>();
         try {
             // Try joining the network by publishing the current object to the RMI registry
-            this.remoteRegistry = LocateRegistry.getRegistry(poneytoponey.App.PORT);
+            this.remoteRegistry = LocateRegistry.getRegistry(host, poneytoponey.App.PORT);
             // We have to publish this object fist before binding it to the registry
             // Note: the port 0 lets the java RMI systems choose a random client port
             Identity stub = (Identity) UnicastRemoteObject.exportObject(this, 0);

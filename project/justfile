@@ -5,8 +5,8 @@ rmi:
     echo Starting Java RMI server, just hit Ctrl+c here to stop it.
     CLASSPATH=app/bin/main/ rmiregistry 7000
 
-client:
+client ip:
     echo Starting another client !
     javac -d app/src/main/java/poneytoponey/build app/src/main/java/poneytoponey/*.java
     clear
-    java -classpath app/src/main/java/poneytoponey/build poneytoponey.App
+    java -classpath app/src/main/java/poneytoponey/build poneytoponey.App {{ip}}
