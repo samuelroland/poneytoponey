@@ -11,5 +11,5 @@ public interface View {
 
     void showChatApprobation(String from);
 
-    void showChatMessage(String from);
+    void showChatMessage(Message msg);
 }

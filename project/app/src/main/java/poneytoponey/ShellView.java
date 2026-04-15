@@ -45,9 +45,11 @@ public class ShellView implements View {
     public void showHelp() {
         System.out.println("Available commands:"
                 + "\n  join <username>       - join the network as a user"
-                + "\n  list                  - list known participants"
+                + "\n  list                  - list known members of the network"
                 + "\n  chat <recipient>      - create or switch to a chat"
+                + "\n  chats                 - list chats"
                 + "\n  switch <recipient>    - switch to an existing chat"
+                + "\n  dump                  - show all messages of the current chat"
                 + "\n  send <message>        - send a message to the active chat"
                 + "\n  history               - show chat history of current chat"
                 + "\n  close <recipient>     - close a chat with a recipient"
@@ -83,6 +85,21 @@ public class ShellView implements View {
 
         this.currentChat = chat.getUuid();
         this.currentChatRecipient = recipient;
+    }
+
+    private void listChats() {
+        identity.getChats().values().stream().forEach(chat -> {
+            System.out.println("- " + chat.getOtherUsername() + ": "
+                    + (chat.getApproved() ? chat.getMessages().size() + " msgs" : "not approved"));
+        });
+    }
+
+    private void dumpMessages() {
+        if (currentChat == null) {
+            System.out.println("No current chat. Please switch to one before dumping messages.");
+        } else {
+            identity.getChats().get(currentChat).getMessages().stream().forEach(msg -> showMessage(msg));
+        }
     }
 
     private void closeChat(String recipient) {
@@ -186,7 +203,16 @@ public class ShellView implements View {
             return;
         }
 
-        chat.insertNewMessage(text.trim(), identity.getUsername());
+        if (!chat.getApproved()) {
+            System.out.println("Chat with " + chat.getOtherUsername()
+                    + " was not yet approved. You cannot send a message for now.");
+            return;
+        }
+        try {
+            identity.sendMessage(currentChat, text.trim());
+        } catch (Exception e) {
+            System.out.println("Cannot send message : " + e.getMessage());
+        }
         System.out.println("Sent message to " + currentChatRecipient + ": " + text.trim());
     }
 
@@ -227,7 +253,7 @@ public class ShellView implements View {
 
         String[] tokens = line.trim().split(" ", 2);
         String command = tokens[0].toLowerCase();
-        String argument = tokens.length > 1 ? tokens[1] : null;
+        String argument = tokens.length > 1 ? tokens[1].trim() : null;
 
         if (!command.equals("join") && !joinedNetwork) {
             System.out.println("You must join the network first.");
@@ -238,16 +264,15 @@ public class ShellView implements View {
             case "join" -> join(argument);
             case "list" -> listParticipants();
             case "chat" -> createSwitchChat(argument);
+            case "chats" -> listChats();
+            case "dump" -> dumpMessages();
             case "switch" -> {
-                if (argument == null || argument.trim().isEmpty()) {
+                if (argument == null || argument.isEmpty()) {
                     System.out.println("Usage: switch <recipient>");
-                    // } else if
-                    // (!this.getChats().containsKey(this.identity.findUuidByUsername(argument.trim())))
-                    // {
-                    // System.out.println("No existing chat with " + argument.trim() + ".");
-                    // TODO: enable again when registry stuff is working
+                } else if (!this.identity.getChats().containsKey(this.identity.findUuidByUsername(argument))) {
+                    System.out.println("No existing chat with " + argument + ".");
                 } else {
-                    currentChatRecipient = argument.trim();
+                    currentChatRecipient = argument;
                     currentChat = this.identity.getChats().get(this.identity.findUuidByUsername(currentChatRecipient))
                             .getUuid();
                     System.out.println("Switched to chat with " + currentChatRecipient + ".");
@@ -275,9 +300,14 @@ public class ShellView implements View {
     }
 
     private void exit() {
-        identity.leave();
-        System.out.println("Goodbye.");
+        if (identity != null)
+            identity.leave();
+        System.out.println();
         System.exit(0);
+    }
+
+    private void showMessage(Message msg) {
+        System.out.println(msg.getAuthor() + ": " + msg.getTexte());
     }
 
     @Override
@@ -287,7 +317,8 @@ public class ShellView implements View {
         System.out.print("Please choose a username to join the network: ");
         try {
             String username = scanner.nextLine();
-            join(username);
+            if (!username.trim().isEmpty())
+                join(username);
         } catch (NoSuchElementException e) {
             // We probably have closed the stdin stream (probably with ctrl+d)
             exit();
@@ -322,8 +353,12 @@ public class ShellView implements View {
     }
 
     @Override
-    public void showChatMessage(String from) {
-        System.out.println("New message available from " + from + ".");
+    public void showChatMessage(Message msg) {
+        if (currentChatRecipient.equals(msg.getAuthor())) {
+            showMessage(msg);
+        } else {
+            System.out.println("New message available from " + msg.getAuthor() + ".");
+        }
         showPrompt();
     }
 
