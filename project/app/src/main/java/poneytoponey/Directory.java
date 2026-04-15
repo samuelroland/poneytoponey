@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -28,7 +30,8 @@ public class Directory {
         HttpURLConnection connection = null;
 
         try {
-            URL url = new URL(host + "/list");
+            URI uri = new URI(host + "/list");
+            URL url = uri.toURL();
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
 
@@ -59,7 +62,7 @@ public class Directory {
 
             return result;
 
-        } catch (IOException e) {
+        } catch (IOException | URISyntaxException e) {
             throw new RuntimeException("Could not list directory entries", e);
         } finally {
             if (connection != null) {
@@ -72,7 +75,9 @@ public class Directory {
         HttpURLConnection connection = null;
 
         try {
-            URL url = new URL(host + "/register");
+            URI uri = new URI(host + "/register");
+            URL url = uri.toURL();
+
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
             connection.setDoOutput(true);
@@ -90,7 +95,7 @@ public class Directory {
                 throw new RuntimeException("join failed with HTTP status " + status);
             }
 
-        } catch (IOException e) {
+        } catch (IOException | URISyntaxException e) {
             throw new RuntimeException("Could not join directory", e);
         } finally {
             if (connection != null) {
@@ -103,7 +108,8 @@ public class Directory {
         HttpURLConnection connection = null;
 
         try {
-            URL url = new URL(host + "/remove");
+            URI uri = new URI(host + "/remove");
+            URL url = uri.toURL();
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
             connection.setDoOutput(true);
@@ -119,7 +125,7 @@ public class Directory {
                 throw new RuntimeException("leave failed with HTTP status " + status);
             }
 
-        } catch (IOException e) {
+        } catch (IOException | URISyntaxException e) {
             throw new RuntimeException("Could not leave directory", e);
         } finally {
             if (connection != null) {
