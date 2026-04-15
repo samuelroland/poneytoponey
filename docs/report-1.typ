@@ -21,7 +21,7 @@
 
   #text(
     size: 18pt,
-  )[Système en pair à pair de messagerie instantanée \ basée sur le style architecturale "object-based".]
+  )[Système en pair à pair de messagerie instantanée \ basée sur le style architecturale "Object-based".]
 
   #text(size: 14pt)[ASAD - 2026]
 
@@ -32,43 +32,55 @@
 
 #pagebreak()
 
-
-== Conception
+= Labo 1 
+== 1. *Diagramme de cas d'utilisation*
 
 #figure(
   image("usecase.svg"),
   caption: [Diagramme de cas d'utilisations],
 )
 
-#figure(
-  image("class.svg"),
-  caption: [Diagramme de classe montrant l'application `App` qui gère une vue `ShellView` et un modèle `HumanEntity`. `HumanEntity` est le seul objet publié sous l'interface `Identity` sur le registre RMI. Toutes les interactions en pair à pair doivent ainsi passer par ce point de communication.],
-)
+== 2. *Diagramme DFD level 1*
 
 #figure(
-  image("requirements.svg"),
-  caption: [Diagramme de requirements],
+  image("dfd.png"),
+  caption: [Data Flow Diagram Level 1],
 )
+L'objectif de ce diagramme était de mettre en lumière le différents rôles des membres du réseau : pour initier la conversation, participer à la conversation, envoyer et recevoir des notifications d'acceptation, de refus et de fermeture de conversations.
 
+== 3. *Diagramme de composant*
 #figure(
-  image("dfd.svg"),
-  caption: [DFD TODO],
+  image("component.svg"),
+  caption: [Diagramme de composants],
 )
 
+== 4. *Diagramme de déploiement*
 #figure(
   image("deployement.svg"),
   caption: [Diagramme de déploiement],
 )
 
+== 5. *Diagramme de requirement*
 #figure(
-  image("component.svg"),
-  caption: [Diagramme de composants],
+  image("requirements.svg"),
+  caption: [Diagramme de requirements],
 )
+
+== 6. *Diagramme de classe*
+
+#figure(
+  image("class.svg", width : 80%),
+  caption: [Diagramme de classe de l'application PoneyToPoney],
+)
+ Le diagramme de classe montre l'application `App` qui gère une vue `ShellView` et un modèle `HumanEntity`. `HumanEntity` est le seul objet publié sous l'interface `Identity` sur le registre RMI. Toutes les interactions en pair à pair doivent ainsi passer par ce point de communication.
+
+== 7. *Diagramme de séquence*
 
 #figure(
   image("sequence.svg"),
   caption: [Diagramme de séquence],
 )
 
-== Implémentation
-TODO ?
+#pagebreak()
+
+= Labo 2 
