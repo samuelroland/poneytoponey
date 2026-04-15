@@ -42,11 +42,11 @@ Here is how you can run a demo with 4 persons joining the network. We have to by
     ```
     cd project
     docker build --network host -t poneytoponey-demo .
-    docker run -it -p 7000:7000 -v .:/project poneytoponey-demo bash
+    docker run --network=host -it -v .:/project poneytoponey-demo
     ```
 1. The leader runs `just rmi &` to start the RMI registry in background, and runs `just client` then (localhost by default).
 1. The other members first start a tmate session by typing `tmate` and share a SSH read-only link to the leader.
-1. Then, they run `just client <ip of the leader> 7000` to connect to the same Java RMI server on port 7000.
+1. Then, they run `just client <ip of the leader>` to connect to the same Java RMI server on port 7000.
 1. The leader can them open 3 other terminal panes with the links of tmate sessions to see everything on one screen, that can be shared on the beamer !
 
 ## Game usage
