@@ -8,18 +8,15 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
-
 import java.rmi.server.UnicastRemoteObject;
 
 public class HumanIdentity implements Identity {
-
     private String username;
-    private Map<String, Identity> knownParticipants; // cache or remote Identity indexed by username
     private Map<UUID, Chat> chats; // ajoutés dans la liste par createChat ?
     private Directory directory;
     private List<View> views;
@@ -30,7 +27,6 @@ public class HumanIdentity implements Identity {
         this.username = user;
         this.views = new ArrayList<>();
         this.chats = new HashMap<>();
-        this.knownParticipants = new HashMap<>();
         try {
             // Try joining the network by publishing the current object to the our local RMI
             // registry
@@ -58,32 +54,45 @@ public class HumanIdentity implements Identity {
     }
 
     public List<String> listParticipantsUsername() {
-        // We only have Identity objects published under their username for now
-        // If we publish other types of objects, we may need to prefix them and remove
-        // these prefixes here after filter.
+        // We can extract the username of all members in the network by listing entries
+        // on the directory and only keeping usernames
         try {
-            return Arrays.asList(this.remoteRegistry.list());
+            return this.directory.list().stream()
+                    .map(entry -> entry.username())
+                    .toList();
         } catch (Exception e) {
             return new ArrayList<>();
         }
     }
 
-    public Chat createChat(String recipient) throws RemoteException, Exception {
-        if (!listParticipantsUsername().contains(recipient)) {
+    public Identity getRemoteIdentityFromUsername(String recipient) throws Exception {
+        Optional<Entry> maybeEntry = this.directory.list().stream().filter(entry -> entry.username().equals(recipient))
+                .findFirst();
+        if (maybeEntry.isEmpty()) {
             throw new Exception("This participant doesn't exist in the network !");
         }
+        Entry entry = maybeEntry.get();
+        String distantIP = entry.ip();
+
+        Registry remoteRegistry = LocateRegistry.getRegistry(distantIP, App.PORT);
+
+        return (Identity) remoteRegistry.lookup("identity");
+    }
+
+    public Chat createChat(String recipient) throws RemoteException, Exception {
+        Identity remote = getRemoteIdentityFromUsername(recipient);
         Chat chat = new Chat(recipient);
-        Identity remote = (Identity) this.remoteRegistry.lookup(recipient);
+        chats.put(chat.getUuid(), chat);
         remote.remoteAskForChat(this.username, chat.getUuid());
         return chat;
     }
 
-    private Identity getRemoteIdentityFromChat(UUID chatID) {
+    private Identity getRemoteIdentityFromChat(UUID chatID) throws Exception {
         String otherUsername = this.chats.get(chatID).getOtherUsername();
-        return knownParticipants.get(otherUsername);
+        return getRemoteIdentityFromUsername(otherUsername);
     }
 
-    public void approveChat(UUID chatID) throws RemoteException {
+    public void approveChat(UUID chatID) throws RemoteException, Exception {
         Chat chat = chats.get(chatID);
         if (chat != null) {
             chat.setApproved(true);
@@ -95,7 +104,7 @@ public class HumanIdentity implements Identity {
         }
     }
 
-    public void refuseChat(UUID oldChatID) throws RemoteException {
+    public void refuseChat(UUID oldChatID) throws RemoteException, Exception {
         Chat chat = chats.get(oldChatID);
         if (chat != null) {
             Identity remote = getRemoteIdentityFromChat(oldChatID);
@@ -109,7 +118,7 @@ public class HumanIdentity implements Identity {
         this.views.add(view);
     }
 
-    public void sendMessage(UUID chatID, String text) throws RemoteException {
+    public void sendMessage(UUID chatID, String text) throws RemoteException, Exception {
         Identity remote = getRemoteIdentityFromChat(chatID);
         Chat chat = chats.get(chatID);
         if (chat != null && chat.getApproved() && text != null) {
@@ -122,7 +131,7 @@ public class HumanIdentity implements Identity {
 
     }
 
-    public void closeChat(UUID chatID) throws RemoteException {
+    public void closeChat(UUID chatID) throws RemoteException, Exception {
         Identity remote = getRemoteIdentityFromChat(chatID);
         if (chats.containsKey(chatID)) {
             chats.remove(chatID);
@@ -135,7 +144,6 @@ public class HumanIdentity implements Identity {
 
     // ----- Identity -----
     public void remoteAskForChat(String author, UUID chatID) throws RemoteException, NotBoundException {
-        knownParticipants.put(author, (Identity) remoteRegistry.lookup(author));
         chats.put(chatID, new Chat(author, chatID)); // save the non approved chat
         for (View view : views) {
             view.showChatRequest(author);
