@@ -58,10 +58,6 @@ public class HumanIdentity implements Identity {
         return this.username;
     }
 
-    public Collection<Chat> getChats() {
-        return this.chats.values();
-    }
-
     public List<String> listParticipantsUsername() {
         // We only have Identity objects published under their username for now
         // If we publish other types of objects, we may need to prefix them and remove
@@ -207,4 +203,16 @@ public class HumanIdentity implements Identity {
         // est ce que y a d'autres à faire ? détruire Chat?
     }
 
+    // ------ getters/setters for chats (to use it in shellview ----
+    public Map<UUID, Chat> getChats() {
+        return this.chats;
+    }
+
+    public void addToChats(UUID uuid, Chat chat) {
+        this.chats.put(uuid, chat);
+    }
+
+    public void removeTOChats(UUID uuid) {
+        this.chats.remove(uuid);
+    }
 }
