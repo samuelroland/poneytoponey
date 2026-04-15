@@ -1,6 +1,5 @@
 package poneytoponey;
 
-import java.net.InetAddress;
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -38,10 +37,16 @@ public class HumanIdentity implements Identity {
             ourLocalRegistry.bind(IDENTITY_BIND, stub);
             try {
                 this.directory.join(username);
+                // Register a hook to run at shutdown to make sure we leave() the directory
+                // before quitting the app when running Ctrl+c!
+                Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                    leave();
+                }));
             } catch (Exception e) {
                 System.err.println(
                         "Cannot join network, either because your IP was already used or your username is already taken: "
                                 + e.getMessage());
+                System.exit(2);
             }
         } catch (AlreadyBoundException e) {
             System.err.println(e.getMessage());
@@ -51,6 +56,7 @@ public class HumanIdentity implements Identity {
     }
 
     public void leave() {
+        System.out.println("Goodbye.");
         try {
             for (Chat chat : chats.values()) {
                 closeChat(chat.getUuid());
@@ -87,8 +93,7 @@ public class HumanIdentity implements Identity {
         String distantIP = entry.ip();
 
         Registry remoteRegistry = LocateRegistry.getRegistry(distantIP, App.PORT);
-
-        return (Identity) remoteRegistry.lookup("identity");
+        return (Identity) remoteRegistry.lookup(IDENTITY_BIND);
     }
 
     public Chat createChat(String recipient) throws RemoteException, Exception {
@@ -138,7 +143,6 @@ public class HumanIdentity implements Identity {
             if (remote != null) {
                 remote.remoteSendMessageInChat(chatID, m.getTexte(), m.getSenderTimestamp());
             }
-            // notifyViewsMessage(chatID,m);
         }
 
     }
@@ -150,7 +154,6 @@ public class HumanIdentity implements Identity {
         }
         if (remote != null) {
             remote.remoteCloseChat(chatID);
-            // chat.show(chatclose()) //mais comment savoir quel chat
         }
     }
 
@@ -186,9 +189,10 @@ public class HumanIdentity implements Identity {
         if (chat == null) {
             return; // à revoir
         }
+        chats.remove(chatID); // delete the chat as cannot do anything with it !
 
         for (View view : views) {
-            view.showChatRefuse(this.username);
+            view.showChatRefuse(chat.getOtherUsername());
         }
 
     }
@@ -200,10 +204,11 @@ public class HumanIdentity implements Identity {
             return; // à revoir
         }
 
-        for (View view : views) {
-            view.showChatMessage(this.username); // j'ai l'impression que cette méthode manque au diagramme de classe...
-        }
+        Message msg = chat.insertNewMessage(text, chat.getOtherUsername());
 
+        for (View view : views) {
+            view.showChatMessage(msg);
+        }
     }
 
     public void remoteCloseChat(UUID chatID) {
@@ -214,7 +219,7 @@ public class HumanIdentity implements Identity {
         }
 
         for (View view : views) {
-            view.showChatClose(this.username);
+            view.showChatClose(chat.getOtherUsername());
         }
 
         chats.remove(chatID);
