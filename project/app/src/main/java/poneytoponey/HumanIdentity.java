@@ -21,6 +21,7 @@ public class HumanIdentity implements Identity {
     private Directory directory;
     private List<View> views;
     private Registry ourLocalRegistry;
+    private String IDENTITY_BIND = "identity";
 
     public HumanIdentity(String user, Directory directory) {
         this.directory = directory;
@@ -34,7 +35,7 @@ public class HumanIdentity implements Identity {
             // We have to publish this object fist before binding it to the registry
             // Note: the port 0 lets the java RMI systems choose a random client port
             Identity stub = (Identity) UnicastRemoteObject.exportObject(this, 0);
-            ourLocalRegistry.bind(user, stub);
+            ourLocalRegistry.bind(IDENTITY_BIND, stub);
             try {
                 this.directory.join(username);
             } catch (Exception e) {

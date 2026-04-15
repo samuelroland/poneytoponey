@@ -58,11 +58,6 @@ public class ShellView implements View {
     }
 
     private void createSwitchChat(String recipient) {
-        if (!joinedNetwork) {
-            System.out.println("You must join the network first.");
-            return;
-        }
-
         if (recipient == null || recipient.trim().isEmpty()) {
             System.out.println("Recipient cannot be empty.");
             return;
@@ -173,11 +168,6 @@ public class ShellView implements View {
     }
 
     private void sendMessage(String text) {
-        if (!joinedNetwork) {
-            System.out.println("You must join the network first.");
-            return;
-        }
-
         if (currentChat == null || currentChatRecipient == null) {
             System.out.println("No active chat selected. Use chat <recipient> first.");
             return;
@@ -201,11 +191,6 @@ public class ShellView implements View {
     }
 
     private void listParticipants() {
-        if (!joinedNetwork) {
-            System.out.println("You must join the network first.");
-            return;
-        }
-
         List<String> participants = identity.listParticipantsUsername();
         if (participants.isEmpty()) {
             System.out.println("No participants found.");
@@ -243,6 +228,11 @@ public class ShellView implements View {
         String[] tokens = line.trim().split(" ", 2);
         String command = tokens[0].toLowerCase();
         String argument = tokens.length > 1 ? tokens[1] : null;
+
+        if (!command.equals("join") && !joinedNetwork) {
+            System.out.println("You must join the network first.");
+            return;
+        }
 
         switch (command) {
             case "join" -> join(argument);
