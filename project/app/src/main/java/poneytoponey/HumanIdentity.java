@@ -39,7 +39,7 @@ public class HumanIdentity implements Identity {
                 InetAddress ip = InetAddress.getLocalHost();
                 this.directory.join(new Entry(username, ip.getHostAddress()));
             } catch (Exception e) {
-                System.err.println("Cannot get current local IP address");
+                System.err.println("Cannot get current local IP address: " + e.getMessage());
                 return;
             }
         } catch (AlreadyBoundException e) {
