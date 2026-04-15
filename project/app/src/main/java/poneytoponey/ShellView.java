@@ -8,6 +8,7 @@ import java.util.Scanner;
 import java.util.UUID;
 
 public class ShellView implements View {
+
     private UUID currentChat;
     private String currentChatRecipient;
     private boolean joinedNetwork;
@@ -71,7 +72,7 @@ public class ShellView implements View {
         recipient = recipient.trim();
         // Chat chat = chats.get(recipient);
         Map<UUID, Chat> chats = this.identity.getChats();
-        Chat chat = chats.get(this.identity.getUUID(recipient)); // à voir, ca prend l'uuid du string name donné
+        Chat chat = chats.get(this.identity.findUuidByUsername(recipient)); 
 
         if (chat == null) {
             try {
@@ -80,8 +81,7 @@ public class ShellView implements View {
                 System.out.println("Unable to create chat with " + recipient + ": " + e.getMessage());
                 return;
             }
-            // this.identity.chats.put(recipient, chat); //je crois que plus besoin de ca du
-            // coup comme on a qu'une liste
+            // this.identity.chats.put(recipient, chat); 
             System.out.println("Created chat with " + recipient + ".");
         } else {
             System.out.println("Switched to existing chat with " + recipient + ".");
@@ -104,7 +104,7 @@ public class ShellView implements View {
         // TODO : Actually close the chat, waiting for imple
         // Block sychronised ?
         try {
-            identity.closeChat(identity.getchat(identity.getUUID(recipient)));
+            identity.closeChat(identity.findUuidByUsername(recipient));
         } catch (Exception e) {
             System.out.println("No chat found with " + recipient + ":" + e.getMessage());
             return;
@@ -125,10 +125,10 @@ public class ShellView implements View {
             return;
         }
 
-        if (identity.getChats().get(identity.getUUID(recipient)) != null) {
-            Chat existingChat = identity.getChats().get(this.identity.getUUID(recipient));
+        if (identity.getChats().get(identity.findUuidByUsername(recipient)) != null) {
+            Chat existingChat = identity.getChats().get(this.identity.findUuidByUsername(recipient));
             try {
-                identity.approveChat(identity.getUUID(recipient));
+                identity.approveChat(identity.findUuidByUsername(recipient));
             } catch (RemoteException e) {
                 System.out.println("Failed to approve chat with " + recipient + e.getMessage());
                 return;
@@ -149,7 +149,7 @@ public class ShellView implements View {
         }
 
         recipient = recipient.trim();
-        Chat maybeChat = this.identity.getChats().get(this.identity.getUUID(recipient));
+        Chat maybeChat = this.identity.getChats().get(this.identity.findUuidByUsername(recipient));
         if (maybeChat != null) {
             UUID oldChatID = maybeChat.getUuid();
             // chats.remove(recipient);
@@ -188,7 +188,7 @@ public class ShellView implements View {
             return;
         }
 
-        Chat chat = this.identity.getChats().get(this.identity.getUUID(currentChatRecipient));
+        Chat chat = this.identity.getChats().get(this.identity.findUuidByUsername(currentChatRecipient));
         if (chat == null) {
             System.out.println("Current chat is no longer available.");
             currentChat = null;
@@ -246,11 +246,11 @@ public class ShellView implements View {
             case "switch" -> {
                 if (argument == null || argument.trim().isEmpty()) {
                     System.out.println("Usage: switch <recipient>");
-                } else if (!this.getChats().containsKey(this.identity.getUUID(argument.trim()))) {
+                } else if (!this.getChats().containsKey(this.identity.findUuidByUsername(argument.trim()))) {
                     System.out.println("No existing chat with " + argument.trim() + ".");
                 } else {
                     currentChatRecipient = argument.trim();
-                    currentChat = this.identity.getChats().get(this.identity.getUUID(currentChatRecipient)).getUuid();
+                    currentChat = this.identity.getChats().get(this.identity.findUuidByUsername(currentChatRecipient)).getUuid();
                     System.out.println("Switched to chat with " + currentChatRecipient + ".");
                 }
             }
@@ -324,7 +324,7 @@ public class ShellView implements View {
         if (currentChatRecipient == null) {
             System.out.println("No active chat. Use chat <recipient> to select a chat.");
         } else {
-            Chat chat = this.identity.getChats().get(this.identity.getUUID(currentChatRecipient));
+            Chat chat = this.identity.getChats().get(this.identity.findUuidByUsername(currentChatRecipient));
             if (chat == null) {
                 System.out.println("Current chat is no longer available.");
             } else {

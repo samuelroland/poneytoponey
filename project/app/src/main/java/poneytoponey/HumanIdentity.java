@@ -109,7 +109,7 @@ public class HumanIdentity implements Identity {
         this.views.add(view);
     }
 
-    private void sendMessage(UUID chatID, String text) throws RemoteException {
+    public void sendMessage(UUID chatID, String text) throws RemoteException {
         Identity remote = getRemoteIdentityFromChat(chatID);
         Chat chat = chats.get(chatID);
         if (chat != null && chat.getApproved() && text != null) {
@@ -122,7 +122,7 @@ public class HumanIdentity implements Identity {
 
     }
 
-    private void closeChat(UUID chatID) throws RemoteException {
+    public void closeChat(UUID chatID) throws RemoteException {
         Identity remote = getRemoteIdentityFromChat(chatID);
         if (chats.containsKey(chatID)) {
             chats.remove(chatID);
