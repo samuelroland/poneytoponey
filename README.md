@@ -7,6 +7,13 @@ A peer-to-peer chat system, with simple direct conversations (2 persons). The in
 - [docs/brainstorm.md](docs/brainstorm.md)
 
 ## Usage
+
+Start a (unique) directory server with port 8080.
+```sh
+cd project
+just directory
+```
+
 Start an RMI registry with port 7000.
 ```sh
 cd project
