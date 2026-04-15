@@ -10,3 +10,9 @@ client ip:
     javac -d app/src/main/java/poneytoponey/build app/src/main/java/poneytoponey/*.java
     clear
     java -classpath app/src/main/java/poneytoponey/build poneytoponey.App {{ip}}
+
+directory:
+    echo Starting the directory server !
+    javac -d app/src/main/java/directory/build app/src/main/java/directory/*.java
+    clear
+    java -classpath app/src/main/java/directory/build directory.DirectoryServer
