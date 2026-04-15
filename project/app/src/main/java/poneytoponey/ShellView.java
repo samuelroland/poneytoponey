@@ -1,7 +1,5 @@
 package poneytoponey;
 
-import java.rmi.RemoteException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -14,7 +12,7 @@ public class ShellView implements View {
     private boolean joinedNetwork;
     private HumanIdentity identity;
     private Scanner scanner = new Scanner(System.in);
-    private String host;
+    private String directoryHost;
 
     // TODO: a refactor is needed here to avoid having 2 list of Chat !
     // It seems we need to have easy access to recipient -> Chat here, but easy
@@ -26,7 +24,7 @@ public class ShellView implements View {
     // This would also delete this attribute below
     // private Map<UUID, Chat> chats = new HashMap<>();
 
-    private void join(String username, String directoryHost) {
+    private void join(String username) {
         if (username == null || username.trim().isEmpty()) {
             System.out.println("Username cannot be empty.");
             return;
@@ -72,7 +70,7 @@ public class ShellView implements View {
         recipient = recipient.trim();
         // Chat chat = chats.get(recipient);
         Map<UUID, Chat> chats = this.identity.getChats();
-        Chat chat = chats.get(this.identity.findUuidByUsername(recipient)); 
+        Chat chat = chats.get(this.identity.findUuidByUsername(recipient));
 
         if (chat == null) {
             try {
@@ -81,7 +79,7 @@ public class ShellView implements View {
                 System.out.println("Unable to create chat with " + recipient + ": " + e.getMessage());
                 return;
             }
-            // this.identity.chats.put(recipient, chat); 
+            // this.identity.chats.put(recipient, chat);
             System.out.println("Created chat with " + recipient + ".");
         } else {
             System.out.println("Switched to existing chat with " + recipient + ".");
@@ -104,6 +102,7 @@ public class ShellView implements View {
         // TODO : Actually close the chat, waiting for imple
         // Block sychronised ?
         try {
+
             identity.closeChat(identity.findUuidByUsername(recipient));
         } catch (Exception e) {
             System.out.println("No chat found with " + recipient + ":" + e.getMessage());
@@ -129,7 +128,7 @@ public class ShellView implements View {
             Chat existingChat = identity.getChats().get(this.identity.findUuidByUsername(recipient));
             try {
                 identity.approveChat(identity.findUuidByUsername(recipient));
-            } catch (RemoteException e) {
+            } catch (Exception e) {
                 System.out.println("Failed to approve chat with " + recipient + e.getMessage());
                 return;
             }
@@ -156,7 +155,7 @@ public class ShellView implements View {
 
             try {
                 identity.refuseChat(oldChatID);
-            } catch (RemoteException e) {
+            } catch (Exception e) {
                 System.out.println("Failed to refuse chat with " + recipient +
                         e.getMessage());
                 return;
@@ -246,11 +245,15 @@ public class ShellView implements View {
             case "switch" -> {
                 if (argument == null || argument.trim().isEmpty()) {
                     System.out.println("Usage: switch <recipient>");
-                } else if (!this.getChats().containsKey(this.identity.findUuidByUsername(argument.trim()))) {
-                    System.out.println("No existing chat with " + argument.trim() + ".");
+                    // } else if
+                    // (!this.getChats().containsKey(this.identity.findUuidByUsername(argument.trim())))
+                    // {
+                    // System.out.println("No existing chat with " + argument.trim() + ".");
+                    // TODO: enable again when registry stuff is working
                 } else {
                     currentChatRecipient = argument.trim();
-                    currentChat = this.identity.getChats().get(this.identity.findUuidByUsername(currentChatRecipient)).getUuid();
+                    currentChat = this.identity.getChats().get(this.identity.findUuidByUsername(currentChatRecipient))
+                            .getUuid();
                     System.out.println("Switched to chat with " + currentChatRecipient + ".");
                 }
             }
@@ -279,8 +282,8 @@ public class ShellView implements View {
     }
 
     @Override
-    public void start(String host) {
-        this.host = host;
+    public void start(String directoryHost) {
+        this.directoryHost = directoryHost;
         System.out.println("Welcome to the PoneyToPoney peer-to-peer system !");
         System.out.print("Please choose a username to join the network: ");
         String username = scanner.nextLine();

@@ -1,7 +1,7 @@
 package poneytoponey;
 
 public interface View {
-    void start(Directory directory);
+    void start(String directoryHost);
 
     void showChatRequest(String from);
 
