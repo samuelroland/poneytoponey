@@ -285,6 +285,7 @@ public class ShellView implements View {
     }
 
     private void exit() {
+        identity.leave();
         System.out.println("Goodbye.");
         System.exit(0);
     }

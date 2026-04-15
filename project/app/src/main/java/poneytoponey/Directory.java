@@ -68,7 +68,7 @@ public class Directory {
         }
     }
 
-    public void join(Entry entry) throws Exception {
+    public void join(String username) throws Exception {
         HttpURLConnection connection = null;
 
         try {
@@ -80,7 +80,7 @@ public class Directory {
             connection.setDoOutput(true);
             connection.setRequestProperty("Content-Type", "text/plain; charset=utf-8");
 
-            byte[] body = entry.username().getBytes(StandardCharsets.UTF_8);
+            byte[] body = username.getBytes(StandardCharsets.UTF_8);
 
             try (OutputStream os = connection.getOutputStream()) {
                 os.write(body);
@@ -89,7 +89,7 @@ public class Directory {
             int status = connection.getResponseCode();
 
             if (status != 201) {
-                throw new RuntimeException("join failed with HTTP status " + status);
+                throw new RuntimeException("Global directory join failed with HTTP status " + status);
             }
 
         } finally {
@@ -99,7 +99,7 @@ public class Directory {
         }
     }
 
-    public void leave(Entry entry) throws Exception {
+    public void leave() throws Exception {
         HttpURLConnection connection = null;
 
         try {

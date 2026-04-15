@@ -36,16 +36,27 @@ public class HumanIdentity implements Identity {
             Identity stub = (Identity) UnicastRemoteObject.exportObject(this, 0);
             ourLocalRegistry.bind(user, stub);
             try {
-                InetAddress ip = InetAddress.getLocalHost();
-                this.directory.join(new Entry(username, ip.getHostAddress()));
+                this.directory.join(username);
             } catch (Exception e) {
-                System.err.println("Cannot get current local IP address: " + e.getMessage());
-                return;
+                System.err.println(
+                        "Cannot join network, either because your IP was already used or your username is already taken: "
+                                + e.getMessage());
             }
         } catch (AlreadyBoundException e) {
             System.err.println(e.getMessage());
         } catch (RemoteException e) {
             System.err.println(e.getMessage());
+        }
+    }
+
+    public void leave() {
+        try {
+            for (Chat chat : chats.values()) {
+                closeChat(chat.getUuid());
+            }
+            this.directory.leave();
+        } catch (Exception e) {
+            System.err.println("Failed to leave sorry, but byebye: " + e.getMessage());
         }
     }
 
