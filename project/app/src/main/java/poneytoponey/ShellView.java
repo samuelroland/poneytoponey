@@ -2,6 +2,7 @@ package poneytoponey;
 
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.UUID;
 
@@ -224,8 +225,13 @@ public class ShellView implements View {
     private void waitWithShellPrompt() {
         while (true) {
             showPrompt();
-            String line = scanner.nextLine();
-            parseCommand(line);
+            try {
+                String line = scanner.nextLine();
+                parseCommand(line);
+            } catch (NoSuchElementException e) {
+                // We probably have closed the stdin stream (probably with ctrl+d)
+                exit();
+            }
         }
     }
 
@@ -273,12 +279,14 @@ public class ShellView implements View {
                 }
             }
             case "help" -> showHelp();
-            case "exit", "quit" -> {
-                System.out.println("Goodbye.");
-                System.exit(0);
-            }
+            case "exit", "quit" -> exit();
             default -> System.out.println("Unknown command: " + command + ". Type help for available commands.");
         }
+    }
+
+    private void exit() {
+        System.out.println("Goodbye.");
+        System.exit(0);
     }
 
     @Override
@@ -286,8 +294,13 @@ public class ShellView implements View {
         this.directoryHost = directoryHost;
         System.out.println("Welcome to the PoneyToPoney peer-to-peer system !");
         System.out.print("Please choose a username to join the network: ");
-        String username = scanner.nextLine();
-        join(username);
+        try {
+            String username = scanner.nextLine();
+            join(username);
+        } catch (NoSuchElementException e) {
+            // We probably have closed the stdin stream (probably with ctrl+d)
+            exit();
+        }
 
         showHelp();
         waitWithShellPrompt();
