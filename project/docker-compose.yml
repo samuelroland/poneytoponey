@@ -4,6 +4,8 @@ services:
     build: .
     working_dir: /project
     entrypoint: just directory
+    ports:
+      - 8080:8080
     volumes:
       - ".:/project"
 

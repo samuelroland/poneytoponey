@@ -1,6 +1,6 @@
 # User-IP Directory API
 
-Simple HTTP service mapping `username -> IP`.
+Simple HTTP service mapping `username -> IP`. A simple way to let clients in the network discover each other without knowing all their IP address in advance. They just have to point to the IP of this directory to join the network, list available members and leave.
 
 * plain text only
 * no JSON
