@@ -215,10 +215,15 @@ public class HumanIdentity implements Identity {
         this.chats.remove(uuid);
     }
 
-    //-----pour trouver le uuid du récipient : chercher dans la liste de tous les chats que l'on en vérifiant la condition chat.username == l'username recherché-----
-    public UUID findUuidByUsername(String recipientUsername){
+    // -----pour trouver le uuid du récipient : chercher dans la liste de tous les
+    // chats que l'on en vérifiant la condition chat.username == l'username
+    // recherché-----
+    public UUID findUuidByUsername(String recipientUsername) {
+        if (recipientUsername == null) {
+            return null;
+        }
         for (Chat chat : this.chats.values()) {
-            if(chat.getOtherUsername().equals(recipientUsername)){
+            if (chat.getOtherUsername().equals(recipientUsername)) {
                 return chat.getUuid();
             }
         }
