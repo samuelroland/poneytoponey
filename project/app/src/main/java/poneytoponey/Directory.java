@@ -7,7 +7,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -26,7 +25,7 @@ public class Directory {
         }
     }
 
-    public List<Entry> list() {
+    public List<Entry> list() throws Exception {
         HttpURLConnection connection = null;
 
         try {
@@ -62,8 +61,6 @@ public class Directory {
 
             return result;
 
-        } catch (IOException | URISyntaxException e) {
-            throw new RuntimeException("Could not list directory entries", e);
         } finally {
             if (connection != null) {
                 connection.disconnect();
@@ -71,7 +68,7 @@ public class Directory {
         }
     }
 
-    public void join(Entry entry) {
+    public void join(Entry entry) throws Exception {
         HttpURLConnection connection = null;
 
         try {
@@ -95,8 +92,6 @@ public class Directory {
                 throw new RuntimeException("join failed with HTTP status " + status);
             }
 
-        } catch (IOException | URISyntaxException e) {
-            throw new RuntimeException("Could not join directory", e);
         } finally {
             if (connection != null) {
                 connection.disconnect();
@@ -104,7 +99,7 @@ public class Directory {
         }
     }
 
-    public void leave(Entry entry) {
+    public void leave(Entry entry) throws Exception {
         HttpURLConnection connection = null;
 
         try {
@@ -125,8 +120,6 @@ public class Directory {
                 throw new RuntimeException("leave failed with HTTP status " + status);
             }
 
-        } catch (IOException | URISyntaxException e) {
-            throw new RuntimeException("Could not leave directory", e);
         } finally {
             if (connection != null) {
                 connection.disconnect();
