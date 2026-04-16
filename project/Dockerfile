@@ -4,4 +4,4 @@ FROM fedora:43
 RUN dnf install -y java-21-openjdk java-21-openjdk-devel tmate just iproute
 RUN dnf install -y clear
 WORKDIR /project
-ENTRYPOINT [ "tail", "-f", "/dev/null" ]
+CMD [ "tail", "-f", "/dev/null" ]
