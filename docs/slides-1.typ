@@ -16,8 +16,8 @@
 #show: slides.with(
   title: [ PoneyToPoney - chat en pair à pair objet-based],
   subtitle: "ASAD 2026 - Présentation partie 1",
-  date: "??? 2026",
-  authors: "Léna Beust, Kylian Manzini, Ileane Crocq, Samuel Roland",
+  date: "22/04/2026",
+  authors: "Léna Beust, Kylian Manzini, Iléane Crocq, Samuel Roland",
 
   // Optional Styling (for more and explanation of options take a look at the typst universe)
   ratio: 16 / 9,
@@ -46,6 +46,8 @@
 == Diagramme de cas d'utilisations
 #image("usecase.svg"),
 
+== Diagramme séquence
+#image("sequence.svg")
 == Diagramme de classe
 #image("class.svg"),
 
