@@ -1,5 +1,6 @@
 package poneytoponey;
 
+import java.net.UnknownHostException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -25,6 +26,14 @@ public class HumanIdentity implements Identity {
     public HumanIdentity(String user, Directory directory) {
         this.directory = directory;
         this.username = user;
+        try {
+            System.setProperty(
+                    "java.rmi.server.hostname",
+                    java.net.InetAddress.getLocalHost().getHostAddress());
+        } catch (UnknownHostException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         this.views = new ArrayList<>();
         this.chats = new HashMap<>();
         try {
