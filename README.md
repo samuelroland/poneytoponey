@@ -71,6 +71,7 @@ Available commands:
   history               - show chat history of current chat
   close <recipient>     - close a chat with a recipient
   refuse <recipient>    - refuse a chat request or discard a chat
+  approve <recipient>   - approve a chat request
   status                - show current chat status
   help                  - show this help text
   exit | quit           - leave the shell

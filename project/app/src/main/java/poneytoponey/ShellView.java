@@ -54,6 +54,7 @@ public class ShellView implements View {
                 + "\n  history               - show chat history of current chat"
                 + "\n  close <recipient>     - close a chat with a recipient"
                 + "\n  refuse <recipient>    - refuse a chat request or discard a chat"
+                + "\n  approve <recipient    - approve a chat request"
                 + "\n  status                - show current chat status"
                 + "\n  help                  - show this help text"
                 + "\n  exit | quit           - leave the shell");
