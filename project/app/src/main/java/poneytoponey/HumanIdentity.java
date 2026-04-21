@@ -1,19 +1,22 @@
 package poneytoponey;
 
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.rmi.server.UnicastRemoteObject;
 
 public class HumanIdentity implements Identity {
     private String username;
@@ -26,13 +29,12 @@ public class HumanIdentity implements Identity {
     public HumanIdentity(String user, Directory directory) {
         this.directory = directory;
         this.username = user;
-        try {
-            System.setProperty(
-                    "java.rmi.server.hostname",
-                    java.net.InetAddress.getLocalHost().getHostAddress());
-        } catch (UnknownHostException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        if (System.getProperty("java.rmi.server.hostname") == null) {
+            try {
+                System.setProperty("java.rmi.server.hostname", resolveRmiHostname());
+            } catch (UnknownHostException | SocketException e) {
+                System.err.println("Cannot detect local RMI hostname: " + e.getMessage());
+            }
         }
         this.views = new ArrayList<>();
         this.chats = new HashMap<>();
@@ -41,8 +43,7 @@ public class HumanIdentity implements Identity {
             // registry
             ourLocalRegistry = LocateRegistry.createRegistry(poneytoponey.App.PORT);
             // We have to publish this object fist before binding it to the registry
-            // Note: the port 0 lets the java RMI systems choose a random client port
-            Identity stub = (Identity) UnicastRemoteObject.exportObject(this, 0);
+            Identity stub = (Identity) UnicastRemoteObject.exportObject(this, poneytoponey.App.PORT);
             ourLocalRegistry.bind(IDENTITY_BIND, stub);
             try {
                 this.directory.join(username);
@@ -262,5 +263,25 @@ public class HumanIdentity implements Identity {
             }
         }
         return null;
+    }
+
+    private static String resolveRmiHostname() throws SocketException, UnknownHostException {
+        var interfaces = NetworkInterface.getNetworkInterfaces();
+        while (interfaces.hasMoreElements()) {
+            NetworkInterface networkInterface = interfaces.nextElement();
+            if (!networkInterface.isUp() || networkInterface.isLoopback() || networkInterface.isVirtual()) {
+                continue;
+            }
+
+            var addresses = networkInterface.getInetAddresses();
+            while (addresses.hasMoreElements()) {
+                InetAddress address = addresses.nextElement();
+                if (address instanceof Inet4Address && !address.isLoopbackAddress()) {
+                    return address.getHostAddress();
+                }
+            }
+        }
+
+        return InetAddress.getLocalHost().getHostAddress();
     }
 }
