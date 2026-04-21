@@ -6,7 +6,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
 import java.net.URI;
+import java.net.Socket;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -125,6 +127,29 @@ public class Directory {
                 connection.disconnect();
             }
         }
+    }
+
+    public String localAddressUsedToReachDirectory() throws Exception {
+        URI uri = new URI(host);
+        String scheme = uri.getScheme();
+        String hostname = uri.getHost();
+        int port = uri.getPort();
+
+        if (hostname == null) {
+            throw new IllegalArgumentException("Invalid directory host: " + host);
+        }
+        if (port == -1) {
+            port = "https".equalsIgnoreCase(scheme) ? 443 : 80;
+        }
+
+        try (Socket socket = new Socket(hostname, port)) {
+            InetAddress localAddress = socket.getLocalAddress();
+            if (!localAddress.isLoopbackAddress()) {
+                return localAddress.getHostAddress();
+            }
+        }
+
+        throw new IllegalStateException("Directory is reached through a loopback address");
     }
 
     private String readStream(InputStream is) throws IOException {
