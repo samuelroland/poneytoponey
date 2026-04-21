@@ -55,7 +55,7 @@ Les différents cas d'utilisation se définissent comme suis :
 == 2. *Diagramme DFD level 1*
 
 #figure(
-  image("dfd.drawio.svg"),
+  image("dfd.svg"),
   caption: [Data Flow Diagram Level 1],
 )
 L'objectif de ce diagramme était de mettre en lumière le différents rôles des membres du réseau : pour initier la conversation, envoyer et recevoir des notifications d'acceptation ou de refus `(1)`, participer à la conversation `(2)`, et de fermeture de conversations `(3)`. Les structures de stockage pour renseigner des membres actuellement contactables `(D1)` et les sessions de conversations courantes `(D2)` ont également été représentées.
