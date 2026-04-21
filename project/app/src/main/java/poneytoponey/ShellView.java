@@ -49,7 +49,6 @@ public class ShellView implements View {
                 + "\n  chat <recipient>      - create or switch to a chat"
                 + "\n  chats                 - list chats"
                 + "\n  switch <recipient>    - switch to an existing chat"
-                + "\n  dump                  - show all messages of the current chat"
                 + "\n  send <message>        - send a message to the active chat"
                 + "\n  history               - show chat history of current chat"
                 + "\n  close <recipient>     - close a chat with a recipient"
@@ -93,14 +92,6 @@ public class ShellView implements View {
             System.out.println("- " + chat.getOtherUsername() + ": "
                     + (chat.getApproved() ? chat.getMessages().size() + " msgs" : "not approved"));
         });
-    }
-
-    private void dumpMessages() {
-        if (currentChat == null) {
-            System.out.println("No current chat. Please switch to one before dumping messages.");
-        } else {
-            identity.getChats().get(currentChat).getMessages().stream().forEach(msg -> showMessage(msg));
-        }
     }
 
     private void closeChat(String recipient) {
@@ -266,7 +257,6 @@ public class ShellView implements View {
             case "list" -> listParticipants();
             case "chat" -> createSwitchChat(argument);
             case "chats" -> listChats();
-            case "dump" -> dumpMessages();
             case "switch" -> {
                 if (argument == null || argument.isEmpty()) {
                     System.out.println("Usage: switch <recipient>");
