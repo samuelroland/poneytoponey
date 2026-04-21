@@ -62,8 +62,6 @@
 )
 
 
-== Diagramme de déploiement
-
 
 ???o
 #figure(
@@ -71,12 +69,18 @@
   caption: [DFD TODO],
 )
 
-#figure(
-  image("deployement.svg"),
-  caption: [Diagramme de déploiement],
-)
+
+== Diagramme de composants
 
 #figure(
   image("component.svg"),
   caption: [Diagramme de composants],
 )
+
+== Diagramme de déploiement
+
+#figure(
+  image("deployement.svg"),
+  caption: [Diagramme de déploiement],
+)
+
