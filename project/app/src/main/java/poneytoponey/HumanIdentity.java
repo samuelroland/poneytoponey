@@ -4,16 +4,15 @@ import java.net.UnknownHostException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.rmi.server.UnicastRemoteObject;
 
 public class HumanIdentity implements Identity {
     private String username;
@@ -41,8 +40,7 @@ public class HumanIdentity implements Identity {
             // registry
             ourLocalRegistry = LocateRegistry.createRegistry(poneytoponey.App.PORT);
             // We have to publish this object fist before binding it to the registry
-            // Note: the port 0 lets the java RMI systems choose a random client port
-            Identity stub = (Identity) UnicastRemoteObject.exportObject(this, 0);
+            Identity stub = (Identity) UnicastRemoteObject.exportObject(this, poneytoponey.App.PORT);
             ourLocalRegistry.bind(IDENTITY_BIND, stub);
             try {
                 this.directory.join(username);
