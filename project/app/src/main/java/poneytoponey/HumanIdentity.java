@@ -31,23 +31,8 @@ public class HumanIdentity implements Identity {
         this.username = user;
         if (System.getProperty("java.rmi.server.hostname") == null) {
             try {
-                System.setProperty("java.rmi.server.hostname", directory.localAddressUsedToReachDirectory());
-            } catch (Exception e) {
-                try {
-                    System.setProperty("java.rmi.server.hostname", resolveRmiHostname());
-                } catch (UnknownHostException | SocketException fallbackError) {
-                    System.err.println("Cannot detect local RMI hostname: " + fallbackError.getMessage());
-                }
-            }
-        }
-
-        String rmiHostname = System.getProperty("java.rmi.server.hostname");
-        if (rmiHostname != null) {
-            System.out.println("RMI hostname: " + rmiHostname + ":" + App.PORT);
-        } else {
-            try {
-                System.setProperty("java.rmi.server.hostname", InetAddress.getLocalHost().getHostAddress());
-            } catch (UnknownHostException e) {
+                System.setProperty("java.rmi.server.hostname", resolveRmiHostname());
+            } catch (UnknownHostException | SocketException e) {
                 System.err.println("Cannot detect local RMI hostname: " + e.getMessage());
             }
         }
