@@ -20,6 +20,11 @@ lena ip:
     just build
     java  -Djava.rmi.server.hostname=10.128.31.123 -classpath app/src/main/java/build poneytoponey.App http://{{ip}}:8080
 
+sam ip:
+    echo Starting another client !
+    just build
+    java  -Djava.rmi.server.hostname=10.128.31.73 -classpath app/src/main/java/build poneytoponey.App http://{{ip}}:8080
+
 kylian ip:
     echo Starting another client !
     just build
