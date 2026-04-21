@@ -44,16 +44,22 @@
 )
 
 == Diagramme de cas d'utilisations
-#image("usecase.svg")
+#figure(
+  image("usecase.svg"),
+  caption: [Diagramme des cas d'utilisation],
+)
 
 == Diagramme séquence
-#image("sequence.svg")
+#figure(
+  image("sequence.svg"),
+  caption: [diagramme séquence],
+)
 
 == Diagramme de classe
 // On montre pas le premier, on le met juste ici en backup.
 #figure(
   image("class.final.svg", width: 100%),
-  caption: [Diagramme de classe complet de l'application PoneyToPoney. Les C signifie "Classe", les I sont des Interfaces],
+  caption: [Diagramme de classe complet de l'application PoneyToPoney. Les C signifient "Classe", les I sont des Interfaces],
 ).
 
 #figure(
@@ -62,11 +68,9 @@
 )
 
 
-
-???o
 #figure(
   image("dfd.svg"),
-  caption: [DFD TODO],
+  caption: [DFD Level 1],
 )
 
 
