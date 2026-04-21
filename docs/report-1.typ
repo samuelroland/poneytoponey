@@ -72,7 +72,8 @@ L'objectif de ce diagramme était de mettre en lumière le différents rôles de
   image("deployement.svg"),
   caption: [Diagramme de déploiement],
 )
-Ce diagramme permet de définir clairement les différentes machines à l'oeuvre lors du fonctionnement de l'application `PoneyToPoney`. En effet, celle-ci requiert la mise en marche d'un serveur RMI Registry gérant une liste des utilisateurs réseau mise à disposition des membres pour assurer l'établissement de conversations.
+Ce diagramme permet de définir clairement les différentes machines à l'œuvre lors du fonctionnement de l'application. Celle-ci requiert le démarrage d'un serveur centralisé Directory, qui fait office d'annuaire en gérant la liste des utilisateurs du réseau. Cette liste est mise à disposition des clients afin de permettre l'établissement des conversations. Les clients communiquent ensuite directement entre eux en pair-à-pair via Java RMI.
+
 == 5. *Diagramme de requirement*
 #figure(
   image("requirements.svg"),
