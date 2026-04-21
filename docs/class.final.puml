@@ -24,13 +24,18 @@ HumanIdentity "*"-l-"*" HumanIdentity: \n\nremotely discuss with >
 HumanIdentity "0..1"-l-"*" View: delegate actions and subscribe for notifs <
 
 ' REMOVE
+' - chats: Map<UUID,Chat>\n
+' - views: List<View>\n
+' - directory: Directory\n
+' - messages: List<Message>\n
+' - identity: HumanIdentity\n
+
 
 ' ENDSTATIC
 class Chat {
 	- uuid: UUID
 	- approved: boolean
-	- messages: List<Message>
-	- otherUsername: String
+		- otherUsername: String
 	+ getUuid(): UUID
 	+ getOtherUsername(): String
 	+ getApproved(): boolean
@@ -89,8 +94,7 @@ class ShellView {
 	- currentChat: UUID
 	- currentChatRecipient: String
 	- joinedNetwork: boolean
-	- identity: HumanIdentity
-	- scanner: Scanner
+		- scanner: Scanner
 	- directoryHost: String
 	- join(username: String): void
 	+ showHelp(): void
@@ -136,10 +140,7 @@ class App {
 
 class HumanIdentity {
 	- username: String
-	- chats: Map<UUID,Chat>
-	- directory: Directory
-	- views: List<View>
-	- ourLocalRegistry: Registry
+				- ourLocalRegistry: Registry
 	- IDENTITY_BIND: String
 	+ leave(): void
 	+ getUsername(): String
