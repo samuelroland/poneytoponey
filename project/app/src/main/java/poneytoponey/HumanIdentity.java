@@ -1,5 +1,9 @@
 package poneytoponey;
 
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
@@ -25,13 +29,12 @@ public class HumanIdentity implements Identity {
     public HumanIdentity(String user, Directory directory) {
         this.directory = directory;
         this.username = user;
-        try {
-            System.setProperty(
-                    "java.rmi.server.hostname",
-                    java.net.InetAddress.getLocalHost().getHostAddress());
-        } catch (UnknownHostException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        if (System.getProperty("java.rmi.server.hostname") == null) {
+            try {
+                System.setProperty("java.rmi.server.hostname", resolveRmiHostname());
+            } catch (UnknownHostException | SocketException e) {
+                System.err.println("Cannot detect local RMI hostname: " + e.getMessage());
+            }
         }
         this.views = new ArrayList<>();
         this.chats = new HashMap<>();
@@ -260,5 +263,25 @@ public class HumanIdentity implements Identity {
             }
         }
         return null;
+    }
+
+    private static String resolveRmiHostname() throws SocketException, UnknownHostException {
+        var interfaces = NetworkInterface.getNetworkInterfaces();
+        while (interfaces.hasMoreElements()) {
+            NetworkInterface networkInterface = interfaces.nextElement();
+            if (!networkInterface.isUp() || networkInterface.isLoopback() || networkInterface.isVirtual()) {
+                continue;
+            }
+
+            var addresses = networkInterface.getInetAddresses();
+            while (addresses.hasMoreElements()) {
+                InetAddress address = addresses.nextElement();
+                if (address instanceof Inet4Address && !address.isLoopbackAddress()) {
+                    return address.getHostAddress();
+                }
+            }
+        }
+
+        return InetAddress.getLocalHost().getHostAddress();
     }
 }
