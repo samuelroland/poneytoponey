@@ -60,12 +60,12 @@ Les différents cas d'utilisation se définissent comme suis :
 )
 L'objectif de ce diagramme était de mettre en lumière le différents rôles des membres du réseau : pour initier la conversation, envoyer et recevoir des notifications d'acceptation ou de refus `(1)`, participer à la conversation `(2)`, et de fermeture de conversations `(3)`. Les structures de stockage pour renseigner des membres actuellement contactables `(D1)` et les sessions de conversations courantes `(D2)` ont également été représentées.
 
-== 3. *Diagramme de composant*
+== 3. *Diagramme de composants*
 #figure(
   image("component.svg"),
   caption: [Diagramme de composants],
 )
-
+Le diagramme de composants permet d'observer les principales interfaces de l'application. Les interfaces les plus importantes sont celles qui relient les sous-systèmes, notamment les interfaces gérant les interactions pair-à-pair et les échanges avec le serveur Directory.
 
 == 4. *Diagramme de déploiement*
 #figure(
