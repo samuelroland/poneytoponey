@@ -49,7 +49,7 @@ Les différents cas d'utilisation se définissent comme suis :
 - *Envoyer un message* : l'uilisateur.trice pourra envoyer des messages aux autres membres ayant accepté son invitation.
 - *Recevoir un message* : L'utilisateur.trice visualisera les messages qu'il a reçu sur des conversations avec d'autres membres qu'il aura acceptés au préalable.
 - *Fermer le chat* : L'utilisateur.trice aura la possibilité de clôturer une conversation préalablement ouverte, cette conversation sera alors supprimée et non consultable.
-- *Consulter la liste et l'historique des conversations* : L'utilisateur.trice pourra visualiser les conversations courrantes avec d'autres membres du réseau ainsi que les différents messages qui les composent.
+- *Consulter la liste et l'historique des conversations* : L'utilisateur.trice pourra visualiser les conversations courantes avec d'autres membres du réseau ainsi que les différents messages qui les composent.
 
 
 == 2. *Diagramme DFD level 1*
@@ -89,9 +89,9 @@ Ce diagramme permet de clarifier la fonctionnalité principalement attendue de n
 )
 
 #figure(image("class.final.svg", width: 100%), caption: [Diagramme de classe complet de l'application PoneyToPoney.]).
-Note: Les C signifie "Classe", les I sont des Interfaces. Les carrés rouges représente la visibilité privée et les ronds vers la visibilité publique. Deux processus sont démarrés séparement, d'où la présence de deux `main` sur `App` et `DirectoryServer`.
+Note: Les C signifient "Classe", les I sont des Interfaces. Les carrés rouges représentent la visibilité privée et les ronds vers la visibilité publique. Deux processus sont démarrés séparement, d'où la présence de deux `main` sur `App` et `DirectoryServer`.
 
-Le diagramme de classe montre l'application `App` qui gère une vue `ShellView`, représentant le prompte de l'utilisateur.trice, et un modèle `HumanEntity`. `HumanEntity` est le seul objet publié sous l'interface `Identity` sur le registre RMI. Toutes les interactions en pair à pair doivent ainsi passer par ce point de communication. Les objets `HumanIdentity`, représentant les utilisateurs du réseau, contiennent le pseudo de l'utilisateur `username`, une liste de `Chat` courants contenant des `Message`envoyés par les utilisateurs réseaux, ainsi qu'une liste des participants connus `Knownparticipants`. (à compléter avec le nouveau diagramme)
+Le diagramme de classe montre l'application `App` qui gère une vue `ShellView`, représentant le prompte de l'utilisateur.trice, et un modèle `HumanEntity`. `HumanEntity` est le seul objet publié sous l'interface `Identity` sur le registre RMI. Toutes les interactions en pair à pair doivent ainsi passer par ce point de communication. Les objets `HumanIdentity`, représentant les utilisateurs du réseau, contiennent le pseudo de l'utilisateur `username`, une liste de `Chat` courants contenant des `Message` envoyés par les utilisateurs réseaux, ainsi qu'une liste des participants connus `Knownparticipants`. Finalement, `DirectoryServer` contient la liste des utilisateurs courants du réseau.
 
 == 7. *Diagramme de séquence*
 
@@ -102,9 +102,9 @@ Le diagramme de classe montre l'application `App` qui gère une vue `ShellView`,
 
 Le groupe a choisi de créer un diagramme de séquence pour ce projet, bien qu'il ne figurait pas dans les attentes du rendu.
 Ce choix a été motivé par le besoin d'avoir une idée claire des différents scénarios possibles et du fonctionnement du réseau, permettant à l'équipe PoneyToPoney de cerner d'éventuels problèmes d'implémentation. À cet effet, ce diagramme clarifie l'ordre des étapes ainsi que les flux de données qui transiteraient dans l'application.
-Nous avons cerné 5 scénarios typiques de l'application PoneyToPoney qui sont représentés danc la `figure 7` :
-- L'initiation de la conversation avec la connexion au réseau.
-- L'envoi d'une demande de chat et la réponse de la personne contactée comprennant trois possibilités : refus, acceptation ou réponse tardive/absente).
+Nous avons cerné 4 scénarios typiques de l'application PoneyToPoney qui sont représentés danc la `figure 8` :
+- L'initiation de la conversation avec la connexion au réseau et la mise à jour des utilisateurs courants du réseau dans Directory.
+- L'envoi d'une demande de chat et la réponse de la personne contactée comprennant trois possibilités : refus, acceptation ou réponse tardive/absente.
 - La fermeture d'une discussion par déconnexion imprévue ou commande.
 Nous pouvons constater la manière dont est gérée la fin d'une conversation dans le bas de ce diagramme, le cas nominal doit être géré sans oublié les cas imprévus comme le départ soudain d'un membre de la conversation (suite à un problème technique de son ordinateur par exemple).
 

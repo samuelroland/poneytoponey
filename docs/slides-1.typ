@@ -44,7 +44,7 @@
 )
 
 == Diagramme de cas d'utilisations
-#image("usecase.svg"),
+#image("usecase.svg")
 
 == Diagramme séquence
 #image("sequence.svg")
