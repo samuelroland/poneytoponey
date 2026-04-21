@@ -23,7 +23,7 @@ Chat "1"--"*" Message: stores >
 HumanIdentity "1"-"*" Chat: stores >
 HumanIdentity "1"-d-"1" Directory: use as client >
 HumanIdentity "*"-l-"*" HumanIdentity: \nremotely discuss with >
-HumanIdentity "0..1"-l-"*" View: \ndelegate actions to, subscribe for notifs >
+HumanIdentity "0..1"-l-"*" View: \ndelegate actions and subscribe for notifs >
 
 ' REMOVE
 

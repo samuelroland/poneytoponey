@@ -48,8 +48,19 @@
 
 == Diagramme séquence
 #image("sequence.svg")
+
 == Diagramme de classe
-#image("class.svg"),
+// On montre pas le premier, on le met juste ici en backup.
+#figure(
+  image("class.final.svg", width: 100%),
+  caption: [Diagramme de classe complet de l'application PoneyToPoney. Les C signifie "Classe", les I sont des Interfaces],
+).
+
+#figure(
+  image("class.simplified.svg", width: 100%),
+  caption: [Diagramme de classe simplifié de l'application PoneyToPoney],
+)
+
 
 == Diagramme de déploiement
 

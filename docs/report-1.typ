@@ -83,9 +83,14 @@ Ce diagramme permet de clarifier la fonctionnalité principalement attendue de n
 == 6. *Diagramme de classe*
 
 #figure(
-  image("class.svg", width: 80%),
-  caption: [Diagramme de classe de l'application PoneyToPoney],
+  image("class.simplified.svg", width: 100%),
+  caption: [Diagramme de classe simplifié de l'application PoneyToPoney],
 )
+
+#figure(
+  image("class.final.svg", width: 100%),
+  caption: [Diagramme de classe complet de l'application PoneyToPoney. Les C signifie "Classe", les I sont des Interfaces],
+).
 Le diagramme de classe montre l'application `App` qui gère une vue `ShellView`, représentant le prompte de l'utilisateur.trice, et un modèle `HumanEntity`. `HumanEntity` est le seul objet publié sous l'interface `Identity` sur le registre RMI. Toutes les interactions en pair à pair doivent ainsi passer par ce point de communication. Les objets `HumanIdentity`, représentant les utilisateurs du réseau, contiennent le pseudo de l'utilisateur `username`, une liste de `Chat` courants contenant des `Message`envoyés par les utilisateurs réseaux, ainsi qu'une liste des participants connus `Knownparticipants`. (à compléter avec le nouveau diagramme)
 
 == 7. *Diagramme de séquence*
