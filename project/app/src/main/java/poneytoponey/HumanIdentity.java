@@ -196,7 +196,7 @@ public class HumanIdentity implements Identity {
     public void remoteRefuseChat(UUID chatID) {
         Chat chat = chats.get(chatID);
 
-        if (chat == null) {
+        if (chat == null || chat.getApproved() == true) {
             return; // à revoir
         }
         chats.remove(chatID); // delete the chat as cannot do anything with it !
