@@ -37,18 +37,17 @@
 
 == Démonstration
 
-== Diagramme de classe
-#figure(
-  image("requirements.svg"),
-  caption: [Diagramme de requirements],
-)
 
 == Diagramme de cas d'utilisations
 #figure(
   image("usecase.svg"),
   caption: [Diagramme des cas d'utilisation],
 )
-
+== Diagramme de requirements
+#figure(
+  image("requirements.svg"),
+  caption: [Diagramme de requirements],
+)
 == Diagramme séquence
 #figure(
   image("sequence.svg"),
@@ -57,10 +56,7 @@
 
 == Diagramme de classe
 // On montre pas le premier, on le met juste ici en backup.
-#figure(
-  image("class.final.svg", width: 100%),
-  caption: [Diagramme de classe complet de l'application PoneyToPoney. Les C signifient "Classe", les I sont des Interfaces],
-).
+#figure(image("class.final.svg", width: 100%), caption: [Diagramme de classe complet de l'application PoneyToPoney.]).
 
 #figure(
   image("class.simplified.svg", width: 100%),
