@@ -14,7 +14,7 @@
 
 // See docs of diatypst on https://typst.app/universe/package/diatypst
 #show: slides.with(
-  title: [ PoneyToPoney - chat en pair à pair objet-based],
+  title: [ PoneyToPoney - chat en pair à pair Objet-Based],
   subtitle: "ASAD 2026 - Présentation partie 1",
   date: "22/04/2026",
   authors: "Léna Beust, Kylian Manzini, Iléane Crocq, Samuel Roland",
@@ -35,7 +35,6 @@
   it,
 )
 
-== Démonstration
 
 
 == Diagramme de cas d'utilisations
@@ -48,19 +47,11 @@
   image("requirements.svg"),
   caption: [Diagramme de requirements],
 )
-== Diagramme séquence
+
+== Diagramme de séquences
 #figure(
   image("sequence.svg"),
   caption: [diagramme séquence],
-)
-
-== Diagramme de classe
-// On montre pas le premier, on le met juste ici en backup.
-#figure(image("class.final.svg", width: 100%), caption: [Diagramme de classe complet de l'application PoneyToPoney.]).
-
-#figure(
-  image("class.simplified.svg", width: 100%),
-  caption: [Diagramme de classe simplifié de l'application PoneyToPoney],
 )
 
 == Diagramme DFD level 1
@@ -68,6 +59,16 @@
   image("dfd.svg"),
   caption: [DFD level 1],
 )
+
+== Diagramme de classe
+// On montre pas le premier, on le met juste ici en backup.
+#figure(image("class.final.svg", width: 100%), caption: [Diagramme de classe complet de l'application PoneyToPoney]).
+
+#figure(
+  image("class.simplified.svg", width: 100%),
+  caption: [Diagramme de classe simplifié de l'application PoneyToPoney],
+)
+
 
 
 == Diagramme de composants
@@ -84,3 +85,8 @@
   caption: [Diagramme de déploiement],
 )
 
+
+
+== Démonstration
+
+#image("/assets/demo.png")
