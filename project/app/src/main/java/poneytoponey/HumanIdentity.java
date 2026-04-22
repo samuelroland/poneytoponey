@@ -127,7 +127,7 @@ public class HumanIdentity implements Identity {
             if (remote != null) {
                 remote.remoteApproveBackChat(chatID);
             }
-            // notifyViewsChatOpened(chatID);
+
         }
     }
 
