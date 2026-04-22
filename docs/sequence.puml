@@ -9,7 +9,11 @@ registry->registry:Entre le nom et l'adresse IP dans les utilisateurs réseau
 m1-> registry: Je demande la liste des utilisateurs 
 registry-->m1:Envoie la liste des noms des membres courants du réseau
 m1->m2:demande de créer un nouveau chat
-alt Demande refusée
+alt Réponse tardive/absente 
+m2->m2: Timeout expiré
+m2-->m1: Je refuse
+
+else Demande refusée
 m2-->m1:Je refuse
 else Demande acceptée
 m2-->m1:J'accepte
