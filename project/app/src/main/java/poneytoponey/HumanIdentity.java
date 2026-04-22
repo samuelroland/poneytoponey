@@ -133,7 +133,7 @@ public class HumanIdentity implements Identity {
 
     public void refuseChat(UUID oldChatID) throws RemoteException, Exception {
         Chat chat = chats.get(oldChatID);
-        if (chat != null) {
+        if (chat.getApproved() == true || chat != null) {
             Identity remote = getRemoteIdentityFromChat(oldChatID);
             chats.remove(oldChatID);
             if (remote != null) {
