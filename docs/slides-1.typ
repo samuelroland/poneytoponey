@@ -67,10 +67,10 @@
   caption: [Diagramme de classe simplifié de l'application PoneyToPoney],
 )
 
-
+== Diagramme DFD level 1
 #figure(
   image("dfd.svg"),
-  caption: [DFD Level 1],
+  caption: [DFD level 1],
 )
 
 

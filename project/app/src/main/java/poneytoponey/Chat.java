@@ -36,7 +36,7 @@ public class Chat {
         return this.approved;
     }
 
-    public void setApproved(boolean t) { // est ce que ca dérange si j'ajoute ca
+    public void setApproved(boolean t) {
         this.approved = t;
     }
 
