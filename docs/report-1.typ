@@ -55,21 +55,21 @@ Les différents cas d'utilisation se définissent comme suis :
 == 2. *Diagramme DFD level 1*
 
 #figure(
-  image("dfd.svg"),
+  image("dfd.pdf"),
   caption: [Data Flow Diagram Level 1],
 )
 L'objectif de ce diagramme était de mettre en lumière le différents rôles des membres du réseau : pour initier la conversation, envoyer et recevoir des notifications d'acceptation ou de refus `(1)`, participer à la conversation `(2)`, et de fermeture de conversations `(3)`. Les structures de stockage pour renseigner des membres actuellement contactables `(D1)` et les sessions de conversations courantes `(D2)` ont également été représentées.
 
 == 3. *Diagramme de composants*
 #figure(
-  image("component.svg"),
+  image("component.pdf"),
   caption: [Diagramme de composants],
 )
 Le diagramme de composants permet d'observer les principales interfaces de l'application. Les interfaces les plus importantes sont celles qui relient les sous-systèmes, notamment les interfaces gérant les interactions pair-à-pair et les échanges avec le serveur Directory.
 
 == 4. *Diagramme de déploiement*
 #figure(
-  image("deployement.svg"),
+  image("deployement.pdf"),
   caption: [Diagramme de déploiement],
 )
 Ce diagramme permet de définir clairement les différentes machines à l'œuvre lors du fonctionnement de l'application. Celle-ci requiert le démarrage d'un serveur centralisé Directory, qui fait office d'annuaire en gérant la liste des utilisateurs du réseau. Cette liste est mise à disposition des clients afin de permettre l'établissement des conversations. Les clients communiquent ensuite directement entre eux en pair-à-pair via Java RMI.
@@ -88,7 +88,8 @@ Ce diagramme permet de clarifier la fonctionnalité principalement attendue de n
   caption: [Diagramme de classe simplifié de l'application PoneyToPoney],
 )
 
-#figure(image("class.final.svg", width: 100%), caption: [Diagramme de classe complet de l'application PoneyToPoney.]).
+#figure(image("class.final.svg", width: 100%), caption: [Diagramme de classe complet de l'application PoneyToPoney.])
+
 Note: Les C signifient "Classe", les I sont des Interfaces. Les carrés rouges représentent la visibilité privée et les ronds vers la visibilité publique. Deux processus sont démarrés séparement, d'où la présence de deux `main` sur `App` et `DirectoryServer`.
 
 Le diagramme de classe montre l'application `App` qui gère une vue `ShellView`, représentant le prompte de l'utilisateur.trice, et un modèle `HumanEntity`. `HumanEntity` est le seul objet publié sous l'interface `Identity` sur le registre RMI. Toutes les interactions en pair à pair doivent ainsi passer par ce point de communication. Les objets `HumanIdentity`, représentant les utilisateurs du réseau, contiennent le pseudo de l'utilisateur `username`, une liste de `Chat` courants contenant des `Message` envoyés par les utilisateurs réseaux, ainsi qu'une liste des participants connus `Knownparticipants`.
@@ -108,6 +109,6 @@ Nous avons cerné 3 scénarios typiques de l'application PoneyToPoney qui sont r
 - La fermeture d'une discussion par déconnexion imprévue ou commande.
 Nous pouvons constater la manière dont est gérée la fin d'une conversation dans le bas de ce diagramme, le cas nominal doit être géré sans oublié les cas imprévus comme le départ soudain d'un membre de la conversation (suite à un problème technique de son ordinateur par exemple).
 
-#pagebreak()
-
-= Labo 2
+// #pagebreak()
+//
+// = Labo 2

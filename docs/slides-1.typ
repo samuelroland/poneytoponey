@@ -35,10 +35,10 @@
   it,
 )
 
-== Sujet
-#align(left + top, [Architecture imposée : *Objectf based*])
+== Java RMI
+#align(left + top, [Architecture imposée : *Object-based*])
 
-
+#image("schemas/rmi.png", height: 89%)
 
 == Java RMI
 
@@ -55,56 +55,33 @@
 
 
 == Diagramme de cas d'utilisations
-#figure(
-  image("usecase.svg"),
-  caption: [Diagramme des cas d'utilisation],
-)
+#image("usecase.svg")
 == Diagramme de requirements
-#figure(
-  image("requirements.svg"),
-  caption: [Diagramme de requirements],
-)
+#image("requirements.svg")
 
 == Diagramme de séquences
-#figure(
-  image("sequence.svg"),
-  caption: [diagramme séquence],
-)
+#image("sequence.svg", height: 112%)
 
 == Diagramme DFD level 1
-#figure(
-  image("dfd.svg"),
-  caption: [DFD level 1],
-)
+#image("dfd.pdf", width: 63%)
 
 == Diagramme de classe
 // On montre pas le premier, on le met juste ici en backup.
-#figure(image("class.final.svg", width: 100%), caption: [Diagramme de classe complet de l'application PoneyToPoney]).
+#image("class.final.svg", width: 75%)
 
-#figure(
-  image("class.simplified.svg", width: 100%),
-  caption: [Diagramme de classe simplifié de l'application PoneyToPoney],
-)
+#image("class.simplified.svg", width: 100%)
 
 
 
 == Diagramme de composants
 
-#figure(
-  image("component.svg"),
-  caption: [Diagramme de composants],
-)
+#image("component.pdf", height: 106%)
 
 == Diagramme de déploiement
 
-#figure(
-  image("deployement.svg"),
-  caption: [Diagramme de déploiement],
-)
-
-
+#image("deployement.pdf")
 
 == Démonstration
 
-#image("/assets/demo.png")
+#image("assets/demo.png")
 
