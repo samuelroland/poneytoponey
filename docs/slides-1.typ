@@ -35,10 +35,10 @@
   it,
 )
 
-== Sujet
-#align(left + top, [Architecture imposée : *Objectf based*])
+== Java RMI
+#align(left + top, [Architecture imposée : *Object-based*])
 
-
+#image("schemas/rmi.png", height: 89%)
 
 == Java RMI
 
