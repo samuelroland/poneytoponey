@@ -102,9 +102,9 @@ Le diagramme de classe montre l'application `App` qui gère une vue `ShellView`,
 
 Le groupe a choisi de créer un diagramme de séquence pour ce projet, bien qu'il ne figurait pas dans les attentes du rendu.
 Ce choix a été motivé par le besoin d'avoir une idée claire des différents scénarios possibles et du fonctionnement du réseau, permettant à l'équipe PoneyToPoney de cerner d'éventuels problèmes d'implémentation. À cet effet, ce diagramme clarifie l'ordre des étapes ainsi que les flux de données qui transiteraient dans l'application.
-Nous avons cerné 4 scénarios typiques de l'application PoneyToPoney qui sont représentés danc la `figure 8` :
+Nous avons cerné 3 scénarios typiques de l'application PoneyToPoney qui sont représentés danc la `figure 8` :
 - L'initiation de la conversation avec la connexion au réseau et la mise à jour des utilisateurs courants du réseau dans Directory.
-- L'envoi d'une demande de chat et la réponse de la personne contactée comprennant trois possibilités : refus, acceptation ou réponse tardive/absente.
+- L'envoi d'une demande de chat et la réponse de la personne contactée comprennant deux possibilités : refus, ou acceptation.
 - La fermeture d'une discussion par déconnexion imprévue ou commande.
 Nous pouvons constater la manière dont est gérée la fin d'une conversation dans le bas de ce diagramme, le cas nominal doit être géré sans oublié les cas imprévus comme le départ soudain d'un membre de la conversation (suite à un problème technique de son ordinateur par exemple).
 

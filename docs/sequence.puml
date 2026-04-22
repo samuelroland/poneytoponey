@@ -4,16 +4,12 @@ participant "m1" as m1
 participant "m2" as m2
 participant "directory" as registry
 
-m1->registry:Je publie mon adresse IP et mon nom pour rejoindre le réseau
-registry->registry:Mise à jour des utilisateurs réseau
+m1->registry:Je publie mon nom pour rejoindre le réseau
+registry->registry:Entre le nom et l'adresse IP dans les utilisateurs réseau
 m1-> registry: Je demande la liste des utilisateurs 
 registry-->m1:Envoie la liste des noms des membres courants du réseau
 m1->m2:demande de créer un nouveau chat
-alt Réponse tardive/absente 
-m1->m1: Timeout expiré
-m2-->m1: J'accepte
-m1->m2: Je ferme le chat
-else Demande refusée
+alt Demande refusée
 m2-->m1:Je refuse
 else Demande acceptée
 m2-->m1:J'accepte
@@ -24,7 +20,7 @@ m2->m1:Envoi d'un autre message
 alt Conversation terminée par commande
     m1->m2:Annonce fermeture du chat
     m1->registry:Annonce départ
-    registry->registry:Mise à jour des utilisateurs réseau
+    registry->registry:Retire le nom et l'IP des utilisateurs réseau
     m1->m1:Fermeture du chat
     m2->m2:Fermeture du chat
 else Conversation terminée par déconnexion imprévue
