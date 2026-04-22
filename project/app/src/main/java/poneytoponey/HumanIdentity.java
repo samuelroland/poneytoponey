@@ -135,6 +135,7 @@ public class HumanIdentity implements Identity {
         Chat chat = chats.get(oldChatID);
         if (chat != null) {
             Identity remote = getRemoteIdentityFromChat(oldChatID);
+            chats.remove(oldChatID);
             if (remote != null) {
                 remote.remoteRefuseChat(oldChatID);
             }
@@ -173,6 +174,20 @@ public class HumanIdentity implements Identity {
         for (View view : views) {
             view.showChatRequest(author);
         }
+
+        Thread timeout = new Thread(() -> {
+            try {
+                Thread.sleep(20_000);
+                Chat chat = chats.get(chatID);
+                if (chat != null && !chat.getApproved()) {
+                    refuseChat(chatID);
+                }
+            } catch (Exception e) {
+                System.err.println("Failed to auto-refuse chat request from " + author + ": " + e.getMessage());
+            }
+        });
+        timeout.setDaemon(true);
+        timeout.start();
     }
 
     public void remoteApproveBackChat(UUID chatID) throws RemoteException {
