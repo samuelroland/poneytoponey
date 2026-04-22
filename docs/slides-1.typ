@@ -35,6 +35,23 @@
   it,
 )
 
+== Sujet
+#align(left + top, [Architecture imposée : *Objectf based*])
+
+
+
+== Java RMI
+
+#align(left + top, [
+
+  - applications Java distribuées
+  - méthodes distantes de Java
+  - utilisation de sérialisation pour marshaller et démarshaller les informations échangées
+  - pas de types tronqués : possibilité de faire du vrai polymorphisme orienté objet
+])
+
+#align(left + bottom, [Documentation : https://docs.oracle.com/javase/8/docs/technotes/guides/rmi/index.html])
+
 
 
 == Diagramme de cas d'utilisations
@@ -90,3 +107,4 @@
 == Démonstration
 
 #image("/assets/demo.png")
+
