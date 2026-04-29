@@ -44,7 +44,7 @@ Manage user availability using timeouts and timestamps, with fallback mechanisms
 - [ ] A retry or fallback mechanism is present (?)
 
 **Ideas of technology**
-- [ ] Acknowlegment
+- [ ] Acknowledgment
 
 ---
 
