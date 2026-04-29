@@ -43,6 +43,9 @@ Manage user availability using timeouts and timestamps, with fallback mechanisms
 - [ ] Timestamps allow detection of delays
 - [ ] A retry or fallback mechanism is present (?)
 
+**Ideas of technology**
+- [ ] Acknowlegment
+
 ---
 
 ### D2 — Conversation Persistence
