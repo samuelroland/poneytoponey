@@ -31,6 +31,10 @@ Implement an authentication system with simple profile management.
 Manage user availability using timeouts and timestamps, with fallback mechanisms in case of issues.
 
 **Acceptance Criteria**
+- [ ] Add an acknowledgement for messages
+- [ ] The chat is closed when the acknowledgement is timedout
+
+**Nice to have**
 - [ ] A user is marked as online or offline
 - [ ] A user is marked offline after timeout
 - [ ] Timestamps allow detection of delays
