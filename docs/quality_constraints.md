@@ -78,10 +78,6 @@ Allow assigning priorities (high or low) to messages that impact their display.
 - [ ] Priority messages are highlighted
 - [ ] Display order respects priorities
 - [ ] The system remains readable and consistent
-- [ ] By default, the priority is low ?
-
-**Nice to have**
-- [ ](Having a TUI to higlight the priored messages)
 
 
 **Technology**
@@ -102,4 +98,5 @@ Support group discussions and broadcasts. We will implement first broadcast. If 
 **Technology**
 - [ ] chopper tous les gens de l'annuaire (leur object identity), puis requete sur tout le monde pour envoyer
 - [ ] nouvelle méthode : un broadcast n'appartient pas à aucune conv et on a pas besoin de demander accepter
+- [ ] on signe quand même
 
