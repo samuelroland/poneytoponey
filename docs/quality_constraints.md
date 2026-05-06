@@ -9,8 +9,8 @@ Protect messages exchanged between two nodes against interception and modificati
 - [ ] Any modification is detectable
 - [ ] Communication is refused if not secure
 
-**Ideas of technologies**
-- [ ] private and public keys
+**Technologie**
+- [ ] private and public keys -> RSA OAEP avec une paire par personne
 
 ---
 
@@ -24,6 +24,9 @@ Implement an authentication system with simple profile management.
 - [ ] A user must be authenticated to access the system (via a password ?)
 - [ ] Profiles are persisted
 - [ ] Sessions expire correctly when user quit
+
+**Technologies**
+- [ ] RSA OAEP avec une paire par personne : chq message est signé et on check à chq reception
 
 ---
 
@@ -44,7 +47,7 @@ Manage user availability using timeouts and timestamps, with fallback mechanisms
 - [ ] A retry or fallback mechanism is present (?)
 
 **Ideas of technology**
-- [ ] Acknowledgment
+- [ ] Acknowledgment avec timeout (2s) et on ferme le chat si pas de réponse
 
 ---
 
@@ -59,6 +62,9 @@ Save conversations to allow restoration after disconnection.
 - [ ] History is restored after reconnection
 - [ ] No message is lost in case of system shutdown
 - [ ] If user quit, the conversation is closed and no longer saved
+
+**Technology**
+- [ ] JSON en local pour chacun
 
 ---
 
@@ -75,7 +81,12 @@ Allow assigning priorities (high or low) to messages that impact their display.
 - [ ] By default, the priority is low ?
 
 **Nice to have**
-- [ ] Having a TUI to higlight the priored messages
+- [ ](Having a TUI to higlight the priored messages)
+
+
+**Technology**
+- [ ] high-> afficher le message quand c'est reçu (pas d'onglets) via un nouvelle méthode send ou un argument de send
+- [ ] low -> par défaut
 
 ---
 
@@ -87,7 +98,8 @@ Support group discussions and broadcasts. We will implement first broadcast. If 
 
 **Acceptance Criteria**
 - [ ] Ability to send a global message to all users
-- [ ] (A user can create a group)
-- [ ] (A user can join a group)
-- [ ] (Messages are received by all members)
+
+**Technology**
+- [ ] chopper tous les gens de l'annuaire (leur object identity), puis requete sur tout le monde pour envoyer
+- [ ] nouvelle méthode : un broadcast n'appartient pas à aucune conv et on a pas besoin de demander accepter
 
