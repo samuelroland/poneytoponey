@@ -87,6 +87,7 @@ interface Identity {
 	+ {abstract}remoteApproveBackChat(chatID: UUID): void
 	+ {abstract}remoteRefuseChat(chatID: UUID): void
 	+ {abstract}remoteSendMessageInChat(chatID: UUID, text: String, sender: long): void
+	+ {abstract}remoteSendImportantMessageInChat(chatID: UUID, text: String, sender: long): void
 	+ {abstract}remoteCloseChat(chatID: UUID): void
 }
 
@@ -104,6 +105,7 @@ class ShellView {
 	- approveChat(recipient: String): void
 	- refuseChat(recipient: String): void
 	- sendMessage(text: String): void
+	- sendImportantMessage(text: String): void
 	- listParticipants(): void
 	- showPrompt(): void
 	- waitWithShellPrompt(): void
@@ -125,10 +127,13 @@ class Message {
 	- senderTimestamp: long
 	- index: Integer
 	- author: String
+	- isImportant : boolean
 	+ getTexte(): String
 	+ getSenderTimestamp(): long
 	+ getIndex(): Integer
 	+ getAuthor(): String
+	+ getIsImportant() : boolean
+	+ setIsImportant() : void
 }
 
 
@@ -152,11 +157,13 @@ class HumanIdentity {
 	+ refuseChat(oldChatID: UUID): void
 	+ subscribeViewForChatEvent(view: View): void
 	+ sendMessage(chatID: UUID, text: String): void
+	+ sendImportantMessage(chatID: UUID, text: String): void
 	+ closeChat(chatID: UUID): void
 	+ remoteAskForChat(author: String, chatID: UUID): void
 	+ remoteApproveBackChat(chatID: UUID): void
 	+ remoteRefuseChat(chatID: UUID): void
 	+ remoteSendMessageInChat(chatID: UUID, text: String, senderTimestamp: long): void
+	+ remoteSendImportantMessageInChat(chatID: UUID, text: String, senderTimestamp: long): void
 	+ remoteCloseChat(chatID: UUID): void
 	+ getChats(): Map<UUID,Chat>
 	+ addToChats(uuid: UUID, chat: Chat): void

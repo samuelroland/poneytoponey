@@ -19,6 +19,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class HumanIdentity implements Identity {
+
     private String username;
     private Map<UUID, Chat> chats; // ajoutés dans la liste par createChat ?
     private Directory directory;
@@ -55,7 +56,7 @@ public class HumanIdentity implements Identity {
             } catch (Exception e) {
                 System.err.println(
                         "Cannot join network, either because your IP was already used or your username is already taken: "
-                                + e.getMessage());
+                        + e.getMessage());
                 System.exit(2);
             }
         } catch (AlreadyBoundException e) {
@@ -158,6 +159,18 @@ public class HumanIdentity implements Identity {
 
     }
 
+    public void sendImportantMessage(UUID chatID, String text) throws RemoteException, Exception {
+        Identity remote = getRemoteIdentityFromChat(chatID);
+        Chat chat = chats.get(chatID);
+        if (chat != null && chat.getApproved() && text != null) {
+            Message m = chat.insertNewMessage(text, this.username);
+            if (remote != null) {
+                remote.remoteSendImportantMessageInChat(chatID, m.getTexte(), m.getSenderTimestamp());
+            }
+        }
+
+    }
+
     public void closeChat(UUID chatID) throws RemoteException, Exception {
         Identity remote = getRemoteIdentityFromChat(chatID);
         if (chats.containsKey(chatID)) {
@@ -236,6 +249,21 @@ public class HumanIdentity implements Identity {
         }
     }
 
+    public void remoteSendImportantMessageInChat(UUID chatID, String text, long sender) throws RemoteException {
+        Chat chat = chats.get(chatID);
+
+        if (chat == null) {
+            return; // à revoir
+        }
+
+        Message msg = chat.insertNewMessage("[IMPORTANT] " + text, chat.getOtherUsername());
+        msg.setIsImportant(true);
+
+        for (View view : views) {
+            view.showChatMessage(msg);
+        }
+    }
+
     public void remoteCloseChat(UUID chatID) {
         Chat chat = chats.get(chatID);
 
@@ -299,4 +327,7 @@ public class HumanIdentity implements Identity {
 
         return InetAddress.getLocalHost().getHostAddress();
     }
+
+
+
 }
