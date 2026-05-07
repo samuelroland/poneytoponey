@@ -13,9 +13,9 @@ public interface Identity extends Remote {
 
     public void remoteRefuseChat(UUID chatID) throws RemoteException;
 
-    public void remoteSendMessageInChat(UUID chatID, String text, long sender) throws RemoteException;
-
-    public void remoteSendImportantMessageInChat(UUID chatID, String text, long sender) throws RemoteException;
+    public void remoteSendMessageInChat(UUID chatID, String text, long sender, boolean prio) throws RemoteException;    // M1
 
     public void remoteCloseChat(UUID chatID) throws RemoteException;
+
+    public void remoteAcknowledgeMessage(UUID chatId, UUID messageId) throws RemoteException; // D1
 }
