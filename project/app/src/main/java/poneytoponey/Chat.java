@@ -1,8 +1,13 @@
 package poneytoponey;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledFuture;
 
 public class Chat {
 
@@ -10,6 +15,10 @@ public class Chat {
     private boolean approved;
     private List<Message> messages;
     private String otherUsername; // the username of the remote client
+    // D1
+    private final Map<UUID, Instant> pendingAcks = new ConcurrentHashMap<>(); // suivi des ack en attente
+    private static final Duration ACK_TIMEOUT = Duration.ofSeconds(30);
+    private ScheduledFuture<?> watchAcks;
 
     // When creating a Chat locally
     public Chat(String otherUsername) {
@@ -49,6 +58,23 @@ public class Chat {
 
     public List<Message> getMessages() {
         return this.messages;
+    }
+
+    // D1
+    public void registerPendingAck(UUID messageId) {
+        pendingAcks.put(messageId, Instant.now());
+    }
+
+    // D1
+    public void receiveAck(UUID messageId) {
+        pendingAcks.remove(messageId);
+    }
+
+    // D1
+    public boolean hasTimedOutAck() {
+        Instant now = Instant.now();
+        return pendingAcks.values().stream()
+                .anyMatch(sent -> Duration.between(sent, now).compareTo(ACK_TIMEOUT) > 0);
     }
 
 }

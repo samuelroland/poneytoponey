@@ -49,7 +49,7 @@ public class ShellView implements View {
                 + "\n  chats                 - list chats"
                 + "\n  switch <recipient>    - switch to an existing chat"
                 + "\n  send <message>        - send a message to the active chat"
-                + "\n  send! <message>       - send an important message to the active chat"
+                + "\n  send! <message>       - send an important message to a chat" // M1
                 + "\n  history               - show chat history of current chat"
                 + "\n  close <recipient>     - close a chat with a recipient"
                 + "\n  refuse <recipient>    - refuse a chat request or discard a chat"
@@ -176,7 +176,7 @@ public class ShellView implements View {
         }
     }
 
-    private void sendMessage(String text) {
+    private void sendMessage(String text, boolean prio) {
         if (currentChat == null || currentChatRecipient == null) {
             System.out.println("No active chat selected. Use chat <recipient> first.");
             return;
@@ -201,39 +201,7 @@ public class ShellView implements View {
             return;
         }
         try {
-            identity.sendMessage(currentChat, text.trim());
-        } catch (Exception e) {
-            System.out.println("Cannot send message : " + e.getMessage());
-        }
-        System.out.println("Sent message to " + currentChatRecipient + ": " + text.trim());
-    }
-
-    private void sendImportantMessage(String text) {
-        if (currentChat == null || currentChatRecipient == null) {
-            System.out.println("No active chat selected. Use chat <recipient> first.");
-            return;
-        }
-
-        if (text == null || text.trim().isEmpty()) {
-            System.out.println("Cannot send an empty message.");
-            return;
-        }
-
-        Chat chat = this.identity.getChats().get(this.identity.findUuidByUsername(currentChatRecipient));
-        if (chat == null) {
-            System.out.println("Current chat is no longer available.");
-            currentChat = null;
-            currentChatRecipient = null;
-            return;
-        }
-
-        if (!chat.getApproved()) {
-            System.out.println("Chat with " + chat.getOtherUsername()
-                    + " was not yet approved. You cannot send a message for now.");
-            return;
-        }
-        try {
-            identity.sendImportantMessage(currentChat, text.trim());
+            identity.sendMessage(currentChat, text.trim(), prio);
         } catch (Exception e) {
             System.out.println("Cannot send message : " + e.getMessage());
         }
@@ -306,9 +274,9 @@ public class ShellView implements View {
                 }
             }
             case "send" ->
-                sendMessage(argument);
+                sendMessage(argument, false);
             case "send!" ->
-                sendImportantMessage(argument);
+                sendMessage(argument, true);        // M1
             case "history" ->
                 showHistory();
             case "close" ->
@@ -395,7 +363,7 @@ public class ShellView implements View {
     public void showChatMessage(Message msg) {
         if (currentChatRecipient.equals(msg.getAuthor())) {
             showMessage(msg);
-        } else {
+        } else {    // M1
             String toPrint = msg.getIsImportant() ? "New important message from " + msg.getAuthor() + ": " + msg.getTexte() : "New message available from " + msg.getAuthor() + ".";
             System.out.println(toPrint);
         }
@@ -421,6 +389,11 @@ public class ShellView implements View {
                 }
             }
         }
+    }
+
+    // D1
+    public HumanIdentity getIdentity() {
+        return this.identity;
     }
 
 }

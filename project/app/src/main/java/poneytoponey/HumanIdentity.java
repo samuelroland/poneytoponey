@@ -17,15 +17,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class HumanIdentity implements Identity {
 
     private String username;
-    private Map<UUID, Chat> chats; // ajoutés dans la liste par createChat ?
+    private Map<UUID, Chat> chats;
     private Directory directory;
     private List<View> views;
     private Registry ourLocalRegistry;
     private String IDENTITY_BIND = "identity";
+    private final ScheduledExecutorService watchAcks = Executors.newSingleThreadScheduledExecutor();    // D1
 
     public HumanIdentity(String user, Directory directory) {
         this.directory = directory;
@@ -147,28 +151,17 @@ public class HumanIdentity implements Identity {
         this.views.add(view);
     }
 
-    public void sendMessage(UUID chatID, String text) throws RemoteException, Exception {
+    // M1
+    public void sendMessage(UUID chatID, String text, boolean prio) throws RemoteException, Exception {
         Identity remote = getRemoteIdentityFromChat(chatID);
         Chat chat = chats.get(chatID);
         if (chat != null && chat.getApproved() && text != null) {
             Message m = chat.insertNewMessage(text, this.username);
+            chat.registerPendingAck(m.getUuid());
             if (remote != null) {
-                remote.remoteSendMessageInChat(chatID, m.getTexte(), m.getSenderTimestamp());
+                remote.remoteSendMessageInChat(chatID, m.getTexte(), m.getSenderTimestamp(), prio);
             }
         }
-
-    }
-
-    public void sendImportantMessage(UUID chatID, String text) throws RemoteException, Exception {
-        Identity remote = getRemoteIdentityFromChat(chatID);
-        Chat chat = chats.get(chatID);
-        if (chat != null && chat.getApproved() && text != null) {
-            Message m = chat.insertNewMessage(text, this.username);
-            if (remote != null) {
-                remote.remoteSendImportantMessageInChat(chatID, m.getTexte(), m.getSenderTimestamp());
-            }
-        }
-
     }
 
     public void closeChat(UUID chatID) throws RemoteException, Exception {
@@ -235,29 +228,20 @@ public class HumanIdentity implements Identity {
 
     }
 
-    public void remoteSendMessageInChat(UUID chatID, String text, long senderTimestamp) {
+    public void remoteSendMessageInChat(UUID chatID, String text, long senderTimestamp, boolean prio) {
         Chat chat = chats.get(chatID);
 
         if (chat == null) {
             return; // à revoir
         }
 
-        Message msg = chat.insertNewMessage(text, chat.getOtherUsername());
-
-        for (View view : views) {
-            view.showChatMessage(msg);
+        Message msg;
+        if (prio) {     // M1
+            msg = chat.insertNewMessage("[IMPORTANT] " + text, chat.getOtherUsername());
+            msg.setIsImportant(true);
+        } else {
+            msg = chat.insertNewMessage(text, chat.getOtherUsername());
         }
-    }
-
-    public void remoteSendImportantMessageInChat(UUID chatID, String text, long sender) throws RemoteException {
-        Chat chat = chats.get(chatID);
-
-        if (chat == null) {
-            return; // à revoir
-        }
-
-        Message msg = chat.insertNewMessage("[IMPORTANT] " + text, chat.getOtherUsername());
-        msg.setIsImportant(true);
 
         for (View view : views) {
             view.showChatMessage(msg);
@@ -276,8 +260,7 @@ public class HumanIdentity implements Identity {
         }
 
         chats.remove(chatID);
-        chat.setApproved(false); // pertinent à faire? ou aucun sens ?
-        // est ce que y a d'autres à faire ? détruire Chat?
+        chat.setApproved(false);
     }
 
     // ------ getters/setters for chats (to use it in shellview ----
@@ -328,6 +311,52 @@ public class HumanIdentity implements Identity {
         return InetAddress.getLocalHost().getHostAddress();
     }
 
+    // D1
+    @Override
+    public void remoteAcknowledgeMessage(UUID chatId, UUID messageId) throws RemoteException {
+        Chat chat = chats.get(chatId);
+        if (chat == null) {
+            return;
+        }
+        chat.receiveAck(messageId);
+    }
 
+    // D1
+    public void startWatchAcks() {
+        watchAcks.scheduleAtFixedRate(() -> {
+            for (Chat chat : chats.values()) {
+                if (chat.getApproved() && chat.hasTimedOutAck()) {
+                    autoDisconnect(chat);
+                }
+            }
+        }, 5, 5, TimeUnit.SECONDS);
+    }
+
+    // D1
+    private void autoDisconnect(Chat chat) {
+        chat.setApproved(false);
+        chats.remove(chat.getUuid());
+        for (View view : views) {
+            view.showChatClose(chat.getOtherUsername());
+        }
+        try {
+            directory.removeUser(chat.getOtherUsername());
+        } catch (Exception e) {
+            System.err.println("[WATCHDOG] Impossible de désinscrire " + chat.getOtherUsername() + " : " + e.getMessage());
+        }
+    }
+
+    // D1
+    public void stopWatchAcks() {
+        watchAcks.shutdown();
+        try {
+            if (!watchAcks.awaitTermination(3, TimeUnit.SECONDS)) {
+                watchAcks.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            watchAcks.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
+    }
 
 }
