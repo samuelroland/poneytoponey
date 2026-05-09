@@ -48,7 +48,11 @@ public class HumanIdentity implements Identity {
         }
         this.views = new ArrayList<>();
         this.chats = new HashMap<>();
-        Files.createDirectories(Paths.get("chats")); // D2 crée dossier chats pour sauvegarde
+        try {
+            Files.createDirectories(Paths.get("chats")); // D2 crée dossier chats pour sauvegarde
+        } catch (IOException e) {
+            System.err.println("problème de création du dossier de sauvegarde pour les messages" + e.getMessage());
+        }
         this.SAVE_PATH = Paths.get("chats", user + ".dat"); // D2
         loadChats(); // D2
         try {
@@ -382,11 +386,11 @@ public class HumanIdentity implements Identity {
         } catch (IOException e) {
             System.err.println("erreur de sauvegarde des chats" + e.getMessage());
         }
-
+        // potentiel problème avec les watchAcks j'ai rien compris
     }
 
-    @SuppressWarnings("unchecked")
-    public synchronized void LoadChat() {
+    @SuppressWarnings("unchecked") // évite problème avec les maps pas serializables ?
+    public synchronized void loadChats() { // D2
         if (Files.exists(SAVE_PATH)) {
             try (ObjectInputStream in = new ObjectInputStream(Files.newInputStream(SAVE_PATH))) {
                 this.chats = (Map<UUID, Chat>) in.readObject();
@@ -401,4 +405,7 @@ public class HumanIdentity implements Identity {
         }
     }
 
+    public void broadcast(String text, boolean prio) throws RemoteException, Exception { // M2
+
+    }
 }
