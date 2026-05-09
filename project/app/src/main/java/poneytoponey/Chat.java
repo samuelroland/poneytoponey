@@ -8,8 +8,11 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
+import java.io.Serializable; //D2
 
-public class Chat {
+public class Chat implements Serializable {
+
+    private static final long serialVersionUID = 1L; // D2 pour l'implémentation de serializable
 
     private UUID uuid;
     private boolean approved;
