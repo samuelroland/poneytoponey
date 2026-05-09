@@ -35,6 +35,7 @@ public class HumanIdentity implements Identity {
     private final ScheduledExecutorService watchAcks = Executors.newSingleThreadScheduledExecutor(); // D1
 
     private Path SAVE_PATH; // D2, emplacement ou les chats sont sauvegardés
+    private static UUID UUID_Broadcast = UUID.fromString("00000000-0000-0000-0000-000000000001"); // M2
 
     public HumanIdentity(String user, Directory directory) {
         this.directory = directory;
@@ -250,6 +251,19 @@ public class HumanIdentity implements Identity {
 
     public void remoteSendMessageInChat(UUID chatID, String text, long senderTimestamp, boolean prio) {
         Chat chat = chats.get(chatID);
+        if (chatID.equals(UUID_Broadcast)) { // M2
+            if (chat == null) {
+                chat = new Chat("BROADCAST", chatID);
+                chat.setApproved(true);
+                chats.put(chatID, chat);
+            }
+            Message msg = chat.insertNewMessage(text, "BROADCAST");
+            saveChat();
+            for (View view : views) {
+                view.showChatMessage(msg);
+            }
+            return;
+        }
 
         if (chat == null) {
             return; // à revoir
@@ -405,7 +419,23 @@ public class HumanIdentity implements Identity {
         }
     }
 
-    public void broadcast(String text, boolean prio) throws RemoteException, Exception { // M2
+    public void broadcast(String text) throws RemoteException, Exception { // M2
+        List<String> users = listParticipantsUsername();
+        for (String user : users) {
+            if (user.equals(this.username)) { // on se l'envoie pas à soi même
+                continue;
+            }
+            try {
+                Identity remote = getRemoteIdentityFromUsername(user);
+                if (remote != null) {
 
+                    remote.remoteSendMessageInChat(UUID_Broadcast,
+                            ("[BROADCAST] venant de " + this.username + ": " + text), System.currentTimeMillis(), true);
+                }
+            } catch (Exception e) {
+                System.err.println("Erreur de Broadcast pour" + user + ":" + e.getMessage());
+            }
+        }
+        saveChat();
     }
 }
