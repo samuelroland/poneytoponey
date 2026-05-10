@@ -54,21 +54,59 @@ public class RSACryptoCheck {
 			throw new RuntimeException("Stop");
 		}
 
-		// Keypair generated with the help of
-		// https://www.devglan.com/online-tools/rsa-encryption-decryption
-		PublicKey publicKey = PemUtils.readPublicKey(
-				"-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA+ZkGBXBkakYK8JTH0CAw9bBh4AEHgdbNA6sHERtDrftBdoBTAZ7fMd4T7LKSRf6L1aabJyGM0gYrsIAkBd09hkVaWWHoUDMv/YS0PE/JPVSBORppynU0JaQeK/2aviMoN6ui+5JzLmHoiVbC1Z/pVFRJXGOBaNn21rEvanIAnQqTBSaeHg2J8GjDsWl1sLwc+CWzkiblLdSWbvSFkfLkhtfWhZ9a4an+6UdDyoldfXrT21UhbhF535+YKw8nMmIJX1+5G/e9RQDjxhQYwyjFu0fodZ/7UKWLSm7tqwk4r/W5co/g11xwAohSdGxNFvyw6NelklsdznoWJ1rQIXumIQIDAQAB\n-----END PUBLIC KEY-----");
-		PrivateKey privateKey = PemUtils.readPrivateKey(
-				"-----BEGIN RSA PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQD5mQYFcGRqRgrwlMfQIDD1sGHgAQeB1s0DqwcRG0Ot+0F2gFMBnt8x3hPsspJF/ovVppsnIYzSBiuwgCQF3T2GRVpZYehQMy/9hLQ8T8k9VIE5GmnKdTQlpB4r/Zq+Iyg3q6L7knMuYeiJVsLVn+lUVElcY4Fo2fbWsS9qcgCdCpMFJp4eDYnwaMOxaXWwvBz4JbOSJuUt1JZu9IWR8uSG19aFn1rhqf7pR0PKiV19etPbVSFuEXnfn5grDycyYglfX7kb971FAOPGFBjDKMW7R+h1n/tQpYtKbu2rCTiv9blyj+DXXHACiFJ0bE0W/LDo16WSWx3OehYnWtAhe6YhAgMBAAECggEAGR+NnzpIBzjv5LWrE6BL4U0M2v/rhiaNegUq585FXpOr7A5AXKlFyMaUXZa/Wa+Emn+jvhl2y9SebOyHA7aYWOWt8ZGE8V6nodZr0GbNCCDzhWCK3bu0oSXO+ilTnDgcdhcPB5C/CoAFKJ7Mq3VGRoxZ2oRzDA9ldMh+r/GT7XqGPOrz6ZKovl+7J8+qP7U8QCtTC1z4RburNHukaYs+KWysCi7i6EKgNE5HssFXwmflu1BTJ+6UorWCMhQNr+KVwoTkfhfgFNtoB0AkBN9nyX0yYUX3az1P98YsAjhvhNbd/ILbywv3daXIhnCh8Y9YB0L+11hJxtHmWOBafGRzOQKBgQD81LmzGU9fmUiuyVrZ8yeqlz04luRGCxkH8ACQZ9IhkcZjzp3Kv8uKn1TK0KI1WaB2mFn+9iAFKfso9kGk/OgkHLE4kmfXXALq73W5C+sJm/RHVylFmGoLcrXqw/4tBT7n7RYLu+Yjtnmfkykn6WRL7nOm8VdCjMH44uXaGogcyQKBgQD8uexsLKsZOFFcif59ukqhmf8IsLhB0wdZux2fMENmL5AMy/6HFF4QrA2+mcjKCAgOGGvZFnQv0cb1I1beMzvxbq8Gin0pZvyWzw3lll0+0Pq3XKFDxuv/ohXCscgeAePxrGf0XGHXXXBO2qOy0Z6Zqkkivatnc0UScaLGKHHimQKBgQDJIs6MzcDYc9BfxK4zH37Z9rFsmJYHpwKFzwgT2ZRQwnDKq+/aARUDNdg19R5mROQkFPXboKA+m3RE1QvKHqzrNaxDLi3QJVHo5xGHYhTcsyX1r0CVLjiG3P4eQ0etNzQhO/rC4PuoQ52kNmWSa9kvkwaMtAjQV7xkrNVg2qSYCQKBgQDw30e95mkA9ZNeTsu3C1pcYckYgE5ttnN4C4Z1Fev3NffmqnsiRcBNxZ6n/izImhULUi1gUC1W8mrdc9w0lcJZHzREWLRoRJcUKa5GFyUyXL3JC8lMLwj5sYNp+EYSi5y016yQ04gRWyZSkcKaCX5PWWSxbvMx+0RnCtWoZh39aQKBgQCEVW9LSSUcb8xmWA00aB+g/kXbiXPoyjA1QcsDOfh8Dq83BLzJhpAgcIQPynN7BkPIPpLj+EAXDcgFCque1ee6gNBzYsojeBrySYQZqlBy5uXmODD7f3meyVsVSXXBPZfkF9JeVFOKqTeDqbkuOp6htUGuFAz5HM1GZJh6ZYna+A==\n-----END RSA PRIVATE KEY-----");
+		// These values were generated with the help of these online tools. The
+		// parameters must be the same as RSA.java to work !
+		// https://www.lddgo.net/en/encrypt/rsa-sign-verify
+		PublicKey publicKey = PemUtils.readPublicKey("""
+				-----BEGIN PUBLIC KEY-----
+				MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlqesJjzAu5Zat6M8DQaS
+				IWgSgQ2YF5/TlBe8/yHRj6/n5CIA/qObE7brikPi83mQAIJKcFzeY3bXFhcAy56+
+				YWlqWyAE1eTMJF3Eg6IM73IeF+ykHKJI0Ywn2YAiPDKPIZ+go+MJULMu15Ly9Nzp
+				lOkFUvkhiz9VSvpNRFQFtLPbQohDMGA3aNbdxaZkSkuHvTLeulqqs7TpSe3eoWfL
+				OKDpWRRNdlZYz4vnMMkwL9eNqZ7ko0IQdM66l6f4oiYt0G6jwWscYSzRhbQMdIHd
+				ZePXdKlv3ZGQTj64wVpPL4bIWYSxWt0O3S3uAWJkbtKgrSQQ//TNlA8huD3e2QsW
+				lwIDAQAB
+				-----END PUBLIC KEY-----
+				""");
+		PrivateKey privateKey = PemUtils.readPrivateKey("""
+				-----BEGIN RSA PRIVATE KEY-----
+				MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCWp6wmPMC7llq3
+				ozwNBpIhaBKBDZgXn9OUF7z/IdGPr+fkIgD+o5sTtuuKQ+LzeZAAgkpwXN5jdtcW
+				FwDLnr5haWpbIATV5MwkXcSDogzvch4X7KQcokjRjCfZgCI8Mo8hn6Cj4wlQsy7X
+				kvL03OmU6QVS+SGLP1VK+k1EVAW0s9tCiEMwYDdo1t3FpmRKS4e9Mt66WqqztOlJ
+				7d6hZ8s4oOlZFE12VljPi+cwyTAv142pnuSjQhB0zrqXp/iiJi3QbqPBaxxhLNGF
+				tAx0gd1l49d0qW/dkZBOPrjBWk8vhshZhLFa3Q7dLe4BYmRu0qCtJBD/9M2UDyG4
+				Pd7ZCxaXAgMBAAECggEBAIsdd7yzWvGdrFVomVoZ2DSa6oNa7zfZcUGODgq1ytJZ
+				B9PEhpCcuOWigqvhdh+IAC5IIb7SMtU79u9B/I0KIBjJg9lznqN4q/1kzMMUj8dH
+				5HwJG54JSR6ewml4haR6t2rAAVF0o7RuUXHlEw6DM/o6lp0AyjXQHM2ohlLzF3W9
+				M6aHwl37Q+7MFCLTcl1aGhAafWc3/oGCTk3NcMtFI246kh1uIoxx9LeSWHs6QOTz
+				5NOAgX2EFbE7LQcBPBGgvxib8mN57HVXj6aorXCHdbWmaRCTGdQhiqquk9cB23CZ
+				gk2Ye2f1G7cAw1OrvUEuu9H6I/Wgd6zty9z71YD+QKECgYEA59dEKJJdTCehOPzF
+				gnfg3UHxenqdd8M8V/uYKqheXtEQONKU8yFGsJehhzyUxb4aW8FdO0HFMGDTkSgM
+				IoOH5o5+arGXYC1D9gLXaCgmgr1ucliHBQcnM6wuxmWz/GUf/qXnY4JsvtOtkYOd
+				BCaFObk3QADnToj/cPhRJUnl4rECgYEAplqjuWZFekCwbiOfYXG2QhZanlOspKDl
+				rJPm2haZDIzvVtUEh1Od1GrvlyfkAeBvrVshfr+kOmZ5oJeJYTFZt1cCRwhN8BxS
+				Y4HptWEGr3KyPUc7LvzLbvhYUKa6lqZbJqbXEmi4g+7VBOt0vF25Zko3qFuLanP8
+				TvcHXnDnj8cCgYEAzRYaTyGasqFj9ztzpMRTAKcy7DvHTIhCuznvE905Dfs2tG1k
+				IedP1ytrUmx+1qYiPwTAaoj13KPqw79/bJCaCZQHtG5BEG06b0d4McVCu+jC6Rfy
+				6Lm5LfakshCJtT3nnaY5GEfp1qz+H3kjzuYceEGl5FJoS4rZHKAteCT03SECgYAe
+				2791O9h1hhx0Qd1l2Q8jETx8FC95VnNkYQc4u2pmnpojNF6jr8oeRjvtgTPVeUme
+				EcKT3X7canfzZ0jPo7TtwpEklhDHEqnh1Y6B296+mvsfTOBYpgIisqTHSTZhjbho
+				4hgRTSW1K4+OWxMLgiNLK0dJzrl85MkP6NkQFseNrwKBgF+h9vO9+HzE7uCOBSF7
+				3B8YfeMMkAcvVSWQw4PExVfC88fmk7dW38ItpWwKZnD4kc34Wtm+7htGu4Q5z9bj
+				Tw1vwsWD7rEBXo2f7TSq3Nxc7Lir2KBKex8iPN+Rl1f8RRtAJRT0n0gUpHsPyhe7
+				Q54zdoLE4SOw7gBXC5kfSEik
+				-----END RSA PRIVATE KEY-----
+				                """);
+
+		String message = "super important message to sign !!!!";
+		String validSignatureBase64 = "MGVpvnvv1cF/XRBX3GUZmzEHM+CKTQ3D3++9obgZ63tueyMPM8lBSxufTJlGoBrdGeYqi55qqMvWP9QRbcxiUul9Z3gQjoXrJnJNJqBHBIzKicP3QFAr/c6eQLTdBts7am4apMNWrEoIZ8xjaFjZ0Xv8vyWMoPYfimVRzAfP7fBkgTzdGj9YnMgAOEzOt2dyrW65M7cnqcyTFbNl6wWxdaBLTC3OnEkkPKvSFvh1zHmTSSH3831k4g0ny3KgMyCCW59gKq0WGhkud6d1BVDVgRXGzWHEXEa2iAzDaJovHjfflKad7dyI76RBbYpQs/uBeoXS4lUv3oz7XGwtzrwOdA==";
+		String plaintext = "hello there my friends";
+		String validCiphertextBase64 = "WF1k9njAqw6tmcA5pKJRKhNXLev3tc2Lfga0jLzzWZfXnfi/i9NXVCSvAutQudctCqnKKcdcahPrn+pk0q0VrE7pdMu12O/p6+cDatfrM88WHGWOWNrdBZezX4tmH5b2/f/lyAs7zKQWmF3kpxzIyN28YZqW8XGqOas1qNzAK6VRI/Ki49ujXAluVBF301J2WI9bi+WHbWeJJzrKaZK5qhmU+XM1NHA8mG0vGglIh150N8dKQuQGH+4IYATVbHCCwIA78RSzrsn+Ah4gzmiwubl3dybMYsOQblhcAjlqYTYDgmRb1d4PFVGLGCgLZdipZrLjmMxO8b66CAX3qXDx5A==";
 
 		System.out.println("[OK] Keypair generated");
 
 		// SIGNATURE TESTS
-
-		// This was generated with the help of
-		// https://www.lddgo.net/en/encrypt/rsa-sign-verify
-		String message = "super important message to sign !!!!";
-		String validSignatureBase64 = "fV5HGyIBJDCdp9NqfGZWiCdfa9axa+ZFoN9Zd2yOjTdhMrDRSMjkfH2zJRHR44QB2ClV2nAswPWmRsWpnLQgYV2jkHuLI/T/L7X/hhK7fo7yxlBcbCKcLr6jq/JL+vGl1L6eZ6tL2QdD77oXh6cnf0fc0838cvwxmQj9ojBuVZJCwrxTAp5IgP3yr7I3xY0J2INa2iAX5Wx+jLt+I4vYfaPZXFaIV0p/IQB8Xt9iXldByeLYNMXtscCSy4XzDRwKsnxV4IZaE+pJeVBFJWuvFl0nYwCwYZF7B1vP0AOXPMkduF2r7UVvkxPY2D647dXm/zTyFRmrOPX9v9azzQZzPg==";
 
 		byte[] content = message.getBytes(StandardCharsets.UTF_8);
 
@@ -98,9 +136,6 @@ public class RSACryptoCheck {
 
 		System.out.println("ENCRYPTION TESTS");
 
-		String plaintext = "hello there my friends";
-		String validCiphertextBase64 = "RBHuFc9D0ZmyBrt7/q5llXHt3X54xV5y+z1Xi/DYDWw/5zpMI9e+KsOICEnqhLvaa3z+vsEgx8trwKanLovL/ix5hiGsGSP5LesZvRg1QxLS7o9EvLSE+fy/zgosQ0y2QtlE3GNU1mhB3zPKWXCCURaG6DNEwBy7IlIDG6sfZ+/isb/9ulheMzDKCo6aiwJiWf1g5ULSg9v3CSCWQLcgzPoCjADajnFy3NFZCpviEaZU/GYv5F78DdJ14HmGzEW26uHfo1WtiyrY6DKgZjf/2o9muqFCjUTt3K+7qiNtW+vwv78GnMGk0gdsq9qPOuTC+68hVTSXH2a5o5Ub7lK6VA==";
-
 		byte[] generatedCiphertext = crypto.encrypt(plaintext, publicKey);
 
 		System.out.println("[INFO] Generated ciphertext (Base64):");
@@ -114,7 +149,7 @@ public class RSACryptoCheck {
 		System.out.println("[INFO] Decrypted value: " + decrypted);
 
 		// INVALID DECRYPTION TEST
-		String invalidCiphertextBase64 = "RBHuFc9D0ZmyBrt7/q5llXHt3X54xV5y+z1Xi/DYDWw/5zpMI9e+KsOICEnqhLvaa3z+vsEgx8trwKanLovL/ix5hiGsGSP5LesZvRg1QxLS7o9EvLSE+fy/zgosQ0y2QtlE3GNU1mhB3zPKWXCCURaG6DNEwBy7IlIDG6sfZ+/isb/9ulheMzDKCo6aiwJiWf1g5ULSg9v3CSCWQLcgzPoCjADajnFy3NFZCpviEaZU/GYv5F78DdJ14HmGzEW26uHfo1WtiyrY6DKgZjf/2o9muqFCjUTt3K+7qiNtW+vwv78GnMGk0gdsq9qPOuTC+68hVTSXH2a5o5Ub7lK6VA==";
+		String invalidCiphertextBase64 = validCiphertextBase64.replaceFirst("a", "4");
 		try {
 			byte[] invalidCiphertext = Base64.getDecoder().decode(invalidCiphertextBase64);
 			String decrypted2 = crypto.decrypt(invalidCiphertext, privateKey);
