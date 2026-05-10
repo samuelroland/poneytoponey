@@ -6,8 +6,12 @@ import java.security.PublicKey;
 public class KeyPair {
 	private java.security.KeyPair pair;
 
-	private KeyPair(java.security.KeyPair kp) {
+	public KeyPair(java.security.KeyPair kp) {
 		this.pair = kp;
+	}
+
+	public PublicKey getPublic() {
+		return pair.getPublic();
 	}
 
 	public static KeyPair loadFromFile(String path) {
@@ -15,10 +19,6 @@ public class KeyPair {
 		// PublicKey pub = PublicKe
 		// java.security.KeyPair = new java.security.KeyPair(pub, priv);
 		// return this;
-	}
-
-	public static KeyPair generateNewPair() {
-		// TODO
 	}
 
 	public void persistToFile() {
