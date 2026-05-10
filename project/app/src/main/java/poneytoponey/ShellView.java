@@ -24,7 +24,6 @@ public class ShellView implements View {
     // O(log(N)) complexity to access a chat.
     // This would also delete this attribute below
     // private Map<UUID, Chat> chats = new HashMap<>();
-
     private void join(String username) {
         if (username == null || username.trim().isEmpty()) {
             System.out.println("Username cannot be empty.");
@@ -50,6 +49,7 @@ public class ShellView implements View {
                 + "\n  chats                 - list chats"
                 + "\n  switch <recipient>    - switch to an existing chat"
                 + "\n  send <message>        - send a message to the active chat"
+                + "\n  send! <message>       - send an important message to a chat" // M1
                 + "\n  history               - show chat history of current chat"
                 + "\n  close <recipient>     - close a chat with a recipient"
                 + "\n  refuse <recipient>    - refuse a chat request or discard a chat"
@@ -161,8 +161,8 @@ public class ShellView implements View {
             try {
                 identity.refuseChat(oldChatID);
             } catch (Exception e) {
-                System.out.println("Failed to refuse chat with " + recipient +
-                        e.getMessage());
+                System.out.println("Failed to refuse chat with " + recipient
+                        + e.getMessage());
                 return;
             }
 
@@ -176,7 +176,7 @@ public class ShellView implements View {
         }
     }
 
-    private void sendMessage(String text) {
+    private void sendMessage(String text, boolean prio) {
         if (currentChat == null || currentChatRecipient == null) {
             System.out.println("No active chat selected. Use chat <recipient> first.");
             return;
@@ -201,7 +201,7 @@ public class ShellView implements View {
             return;
         }
         try {
-            identity.sendMessage(currentChat, text.trim());
+            identity.sendMessage(currentChat, text.trim(), prio);
         } catch (Exception e) {
             System.out.println("Cannot send message : " + e.getMessage());
         }
@@ -253,10 +253,14 @@ public class ShellView implements View {
         }
 
         switch (command) {
-            case "join" -> join(argument);
-            case "list" -> listParticipants();
-            case "chat" -> createSwitchChat(argument);
-            case "chats" -> listChats();
+            case "join" ->
+                join(argument);
+            case "list" ->
+                listParticipants();
+            case "chat" ->
+                createSwitchChat(argument);
+            case "chats" ->
+                listChats();
             case "switch" -> {
                 if (argument == null || argument.isEmpty()) {
                     System.out.println("Usage: switch <recipient>");
@@ -269,11 +273,18 @@ public class ShellView implements View {
                     System.out.println("Switched to chat with " + currentChatRecipient + ".");
                 }
             }
-            case "send" -> sendMessage(argument);
-            case "history" -> showHistory();
-            case "close" -> closeChat(argument);
-            case "approve" -> approveChat(argument);
-            case "refuse" -> refuseChat(argument);
+            case "send" ->
+                sendMessage(argument, false);
+            case "send!" ->
+                sendMessage(argument, true);        // M1
+            case "history" ->
+                showHistory();
+            case "close" ->
+                closeChat(argument);
+            case "approve" ->
+                approveChat(argument);
+            case "refuse" ->
+                refuseChat(argument);
             case "status" -> {
                 if (!joinedNetwork) {
                     System.out.println("Not joined.");
@@ -284,15 +295,19 @@ public class ShellView implements View {
                             "Joined as " + identity.getUsername() + ". Active chat with " + currentChatRecipient + ".");
                 }
             }
-            case "help" -> showHelp();
-            case "exit", "quit" -> exit();
-            default -> System.out.println("Unknown command: " + command + ". Type help for available commands.");
+            case "help" ->
+                showHelp();
+            case "exit", "quit" ->
+                exit();
+            default ->
+                System.out.println("Unknown command: " + command + ". Type help for available commands.");
         }
     }
 
     private void exit() {
-        if (identity != null)
+        if (identity != null) {
             identity.leave();
+        }
         System.out.println();
         System.exit(0);
     }
@@ -308,8 +323,9 @@ public class ShellView implements View {
         System.out.print("Please choose a username to join the network: ");
         try {
             String username = scanner.nextLine();
-            if (!username.trim().isEmpty())
+            if (!username.trim().isEmpty()) {
                 join(username);
+            }
         } catch (NoSuchElementException e) {
             // We probably have closed the stdin stream (probably with ctrl+d)
             exit();
@@ -347,8 +363,9 @@ public class ShellView implements View {
     public void showChatMessage(Message msg) {
         if (currentChatRecipient.equals(msg.getAuthor())) {
             showMessage(msg);
-        } else {
-            System.out.println("New message available from " + msg.getAuthor() + ".");
+        } else {    // M1
+            String toPrint = msg.getIsImportant() ? "New important message from " + msg.getAuthor() + ": " + msg.getTexte() : "New message available from " + msg.getAuthor() + ".";
+            System.out.println(toPrint);
         }
         showPrompt();
     }
@@ -372,6 +389,11 @@ public class ShellView implements View {
                 }
             }
         }
+    }
+
+    // D1
+    public HumanIdentity getIdentity() {
+        return this.identity;
     }
 
 }

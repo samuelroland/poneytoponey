@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Directory {
+
     private final String host;
 
     public Directory(String host) {
@@ -145,5 +146,33 @@ public class Directory {
         }
 
         return sb.toString();
+    }
+
+    // D1
+    public void removeUser(String username) throws Exception {
+        HttpURLConnection connection = null;
+
+        try {
+            URI uri = new URI(host + "/remove/" + username);
+            URL url = uri.toURL();
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setDoOutput(true);
+
+            try (OutputStream os = connection.getOutputStream()) {
+                os.write(new byte[0]);
+            }
+
+            int status = connection.getResponseCode();
+
+            if (status != 200) {
+                throw new RuntimeException("removeUser failed with HTTP status " + status);
+            }
+
+        } finally {
+            if (connection != null) {
+                connection.disconnect();
+            }
+        }
     }
 }

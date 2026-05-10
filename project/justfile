@@ -30,6 +30,11 @@ kylian ip:
     just build
     java  -Djava.rmi.server.hostname=10.128.31.48 -classpath app/src/main/java/build poneytoponey.App http://{{ip}}:8080
 
+ileane ip:
+    echo Starting another client !
+    just build
+    java  -Djava.rmi.server.hostname=10.128.31.83 -classpath app/src/main/java/build poneytoponey.App http://{{ip}}:8080
+
 directory:
     echo Starting the directory server !
     just build

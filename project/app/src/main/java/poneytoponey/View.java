@@ -1,6 +1,7 @@
 package poneytoponey;
 
 public interface View {
+
     void start(String directoryHost);
 
     void showChatRequest(String from);
@@ -12,4 +13,7 @@ public interface View {
     void showChatApprobation(String from);
 
     void showChatMessage(Message msg);
+
+    // D1
+    HumanIdentity getIdentity();
 }
