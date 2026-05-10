@@ -16,6 +16,7 @@ import crypto.Crypto;
 import crypto.RSA;
 
 // Some basic hand-crafted tests without JUnit to verify correctness of implementation
+// ChatGPT public free version was heavily used to write this
 public class RSACryptoCheck {
 	public class PemUtils {
 
