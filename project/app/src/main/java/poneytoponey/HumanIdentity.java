@@ -21,11 +21,15 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import crypto.KeyPair;
+import crypto.RSA;
+
 public class HumanIdentity implements Identity {
 
     private String username;
     private Map<UUID, Chat> chats;
     private Directory directory;
+    private final KeyPair keyPair;
     private List<View> views;
     private Registry ourLocalRegistry;
     private String IDENTITY_BIND = "identity";
@@ -34,6 +38,7 @@ public class HumanIdentity implements Identity {
     public HumanIdentity(String user, Directory directory) {
         this.directory = directory;
         this.username = user;
+        this.keyPair = generateKeyPair();
         if (System.getProperty("java.rmi.server.hostname") == null) {
             try {
                 System.setProperty("java.rmi.server.hostname", resolveRmiHostname());
@@ -51,7 +56,7 @@ public class HumanIdentity implements Identity {
             Identity stub = (Identity) UnicastRemoteObject.exportObject(this, poneytoponey.App.PORT);
             ourLocalRegistry.bind(IDENTITY_BIND, stub);
             try {
-                this.directory.join(username);
+                this.directory.join(username, keyPair);
                 // Register a hook to run at shutdown to make sure we leave() the directory
                 // before quitting the app when running Ctrl+c!
                 Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -76,7 +81,7 @@ public class HumanIdentity implements Identity {
             for (Chat chat : chats.values()) {
                 closeChat(chat.getUuid());
             }
-            this.directory.leave();
+            this.directory.leave(keyPair);
         } catch (Exception e) {
             System.err.println("Failed to leave sorry, but byebye: " + e.getMessage());
         }
@@ -340,9 +345,21 @@ public class HumanIdentity implements Identity {
             view.showChatClose(chat.getOtherUsername());
         }
         try {
-            directory.removeUser(chat.getOtherUsername());
+            directory.removeUser(chat.getOtherUsername(), keyPair);
         } catch (Exception e) {
             System.err.println("[WATCHDOG] Impossible de désinscrire " + chat.getOtherUsername() + " : " + e.getMessage());
+        }
+    }
+
+    public KeyPair getKeyPair() {
+        return keyPair;
+    }
+
+    private static KeyPair generateKeyPair() {
+        try {
+            return new RSA().generateKeyPair();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to generate identity key pair", e);
         }
     }
 

@@ -1,5 +1,6 @@
 package crypto;
 
+import java.security.PrivateKey;
 import java.security.PublicKey;
 
 // A RSA keypair
@@ -14,7 +15,13 @@ public class KeyPair {
 		return pair.getPublic();
 	}
 
+	public PrivateKey getPrivate() {
+		return pair.getPrivate();
+	}
+
 	public static KeyPair loadFromFile(String path) {
+		throw new UnsupportedOperationException("Not implemented yet");
+
 		// TODO
 		// PublicKey pub = PublicKe
 		// java.security.KeyPair = new java.security.KeyPair(pub, priv);
@@ -22,6 +29,6 @@ public class KeyPair {
 	}
 
 	public void persistToFile() {
-		// TODO
+		throw new UnsupportedOperationException("Not implemented yet");
 	}
 }

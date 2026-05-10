@@ -1,5 +1,5 @@
 package poneytoponey;
 
-public record Entry(String username, String ip) {
+public record Entry(String username, String ip, String publicKey) {
 
 }
