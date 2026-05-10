@@ -40,3 +40,9 @@ directory:
     just build
     java -classpath app/src/main/java/build directory.DirectoryServer
 
+faulty-leave ip username:
+    echo Running a client that sends a bad leave signature !
+    just build
+    javac -classpath app/src/main/java/build -d app/src/test/java/build app/src/test/java/poneytoponey/FaultyDirectory.java app/src/test/java/poneytoponey/FaultyLeaveCheck.java
+    java -classpath "app/src/main/java/build;app/src/test/java/build" poneytoponey.FaultyLeaveCheck http://{{ip}}:8080 {{username}}
+
