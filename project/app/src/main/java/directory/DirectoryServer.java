@@ -7,7 +7,6 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
-import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.spec.X509EncodedKeySpec;
@@ -17,8 +16,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
-import javax.crypto.NoSuchPaddingException;
-
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 
@@ -27,14 +24,7 @@ import crypto.RSA;
 public class DirectoryServer {
 
     private static final Logger LOGGER = Logger.getLogger(DirectoryServer.class.getName());
-    static RSA rsa;
-    static {
-        try {
-            rsa = new RSA();
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
-            throw new RuntimeException("Failed to initialize RSA", e);
-        }
-    }
+    static RSA rsa = new RSA();;
 
     static private class Content {
 
@@ -192,7 +182,8 @@ public class DirectoryServer {
         }
 
         if (!registerChallenge.pubkey.equals(pubkey)) {
-            sendText(exchange, 401, "Public key mismatch", "register confirm public key mismatch for username " + username);
+            sendText(exchange, 401, "Public key mismatch",
+                    "register confirm public key mismatch for username " + username);
             return;
         }
 
