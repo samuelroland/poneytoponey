@@ -10,7 +10,7 @@ public class Message {
     public boolean isImportant; // M1
     private final UUID uuid; // D1
 
-    public Message(String texte, long senderTimestamp, String author) {
+    public Message(String texte, long senderTimestamp, String author, boolean isImportant) {
         this.texte = texte;
         this.senderTimestamp = senderTimestamp;
         this.author = author;
@@ -33,11 +33,6 @@ public class Message {
     // M1
     public Boolean getIsImportant() {
         return this.isImportant;
-    }
-
-    // M1
-    public void setIsImportant(boolean bool) {
-        this.isImportant = bool;
     }
 
     // D1

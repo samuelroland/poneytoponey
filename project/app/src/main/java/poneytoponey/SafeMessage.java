@@ -47,8 +47,7 @@ public class SafeMessage {
         String author = crypto.decrypt(this.encryptedAuthor, ourPrivateKey);
         String timestamp = crypto.decrypt(this.encryptedSenderTimestamp, ourPrivateKey);
         String important = crypto.decrypt(this.encryptedImportantFlag, ourPrivateKey);
-        Message m = new Message(text, Long.parseLong(timestamp), author);
-        m.setIsImportant(Boolean.parseBoolean(important));
+        Message m = new Message(text, Long.parseLong(timestamp), author, Boolean.parseBoolean(important));
         return m;
     }
 
