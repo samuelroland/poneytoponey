@@ -49,9 +49,13 @@ public class Chat {
         this.approved = t;
     }
 
+    public void insertNewReceivedMessage(Message msg) {
+        messages.add(msg);
+    }
+
     public Message insertNewMessage(String text, String author) {
         long ts = System.currentTimeMillis();
-        Message m = new Message(text, ts, messages.size(), author);
+        Message m = new Message(text, ts, author);
         messages.add(m);
         return m;
     }
