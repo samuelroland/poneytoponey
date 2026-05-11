@@ -13,7 +13,7 @@ public interface Identity extends Remote {
 
     public void remoteRefuseChat(UUID chatID) throws RemoteException;
 
-    public void remoteSendMessageInChat(UUID chatID, String text, long sender, boolean prio) throws RemoteException;    // M1
+    public void remoteSendMessageInChat(UUID chatID, SafeMessage safeMessage) throws RemoteException; // M1
 
     public void remoteCloseChat(UUID chatID) throws RemoteException;
 

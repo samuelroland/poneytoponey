@@ -34,7 +34,7 @@ public class HumanIdentity implements Identity {
     private List<View> views;
     private Registry ourLocalRegistry;
     private String IDENTITY_BIND = "identity";
-    private final ScheduledExecutorService watchAcks = Executors.newSingleThreadScheduledExecutor();    // D1
+    private final ScheduledExecutorService watchAcks = Executors.newSingleThreadScheduledExecutor(); // D1
 
     public HumanIdentity(String user, Directory directory) {
         this.directory = directory;
@@ -72,7 +72,7 @@ public class HumanIdentity implements Identity {
             } catch (Exception e) {
                 System.err.println(
                         "Cannot join network, either because your IP was already used or your username is already taken: "
-                        + e.getMessage());
+                                + e.getMessage());
                 System.exit(2);
             }
         } catch (AlreadyBoundException e) {
@@ -178,14 +178,19 @@ public class HumanIdentity implements Identity {
     }
 
     // M1
-    public void sendMessage(UUID chatID, String text, boolean prio) throws RemoteException, Exception {
+    public void sendMessage(UUID chatID, String text, boolean important) throws RemoteException, Exception {
         Identity remote = getRemoteIdentityFromChat(chatID);
         Chat chat = chats.get(chatID);
         if (chat != null && chat.getApproved() && text != null) {
-            Message m = chat.insertNewMessage(text, this.username);
+            Message m = chat.insertNewMessage(text, this.username, important);
             chat.registerPendingAck(m.getUuid());
+            Optional<PublicKey> pubkey = getParticipantPublicKey(chat.getOtherUsername());
+            if (pubkey.isEmpty()) {
+                throw new RemoteException("No participant " + chat.getOtherUsername() + " found in the network !");
+            }
+            SafeMessage safeMessage = new SafeMessage(m, keyPair.getPrivate(), pubkey.get());
             if (remote != null) {
-                remote.remoteSendMessageInChat(chatID, m.getTexte(), m.getSenderTimestamp(), prio);
+                remote.remoteSendMessageInChat(chatID, safeMessage);
             }
         }
     }
@@ -254,20 +259,26 @@ public class HumanIdentity implements Identity {
 
     }
 
-    public void remoteSendMessageInChat(UUID chatID, String text, long senderTimestamp, boolean prio) {
+    public void remoteSendMessageInChat(UUID chatID, SafeMessage safeMessage) throws RemoteException {
         Chat chat = chats.get(chatID);
 
         if (chat == null) {
             return; // à revoir
         }
-
-        Message msg;
-        if (prio) {     // M1
-            msg = chat.insertNewMessage("[IMPORTANT] " + text, chat.getOtherUsername());
-            msg.setIsImportant(true);
-        } else {
-            msg = chat.insertNewMessage(text, chat.getOtherUsername());
+        // Verify message's signature, decrypt it and store it
+        String author = chat.getOtherUsername();
+        var publicKey = getParticipantPublicKey(author);
+        if (publicKey.isEmpty()) {
+            throw new RemoteException("The sender of the message doesn't exist in the network !");
         }
+        Message msg = safeMessage.verifyAndDecrypt(publicKey.get(), keyPair.getPrivate());
+        if (msg == null) {
+            throw new RemoteException("Invalid message received !");
+        }
+        if (!msg.getAuthor().equals(author)) {
+            throw new RemoteException("Invalid author field for this chat !");
+        }
+        chat.insertNewReceivedMessage(msg);
 
         for (View view : views) {
             view.showChatMessage(msg);
@@ -368,7 +379,8 @@ public class HumanIdentity implements Identity {
         try {
             directory.removeUser(chat.getOtherUsername(), keyPair);
         } catch (Exception e) {
-            System.err.println("[WATCHDOG] Impossible de désinscrire " + chat.getOtherUsername() + " : " + e.getMessage());
+            System.err.println(
+                    "[WATCHDOG] Impossible de désinscrire " + chat.getOtherUsername() + " : " + e.getMessage());
         }
     }
 
@@ -396,5 +408,4 @@ public class HumanIdentity implements Identity {
             Thread.currentThread().interrupt();
         }
     }
-
 }
