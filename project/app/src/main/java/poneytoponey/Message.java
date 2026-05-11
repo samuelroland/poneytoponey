@@ -1,24 +1,20 @@
 package poneytoponey;
 
-import java.time.Instant;
 import java.util.UUID;
 
 public class Message {
 
     private String texte;
-    private long senderTimestamp;
-    private Integer index;
+    private long senderTimestamp; // D1
     private String author;
-    public boolean isImportant;     // M1
-    private Instant timestamp;  // D1
-    private final UUID uuid;       // D1
+    public boolean isImportant; // M1
+    private final UUID uuid; // D1
 
-    public Message(String texte, long senderTimestamp, Integer index, String author) {
+    public Message(String texte, long senderTimestamp, String author) {
         this.texte = texte;
         this.senderTimestamp = senderTimestamp;
-        this.index = index;
         this.author = author;
-        this.isImportant = false;   // M1
+        this.isImportant = false; // M1
         this.uuid = UUID.randomUUID(); // D1;
     }
 
@@ -26,12 +22,8 @@ public class Message {
         return this.texte;
     }
 
-    public long getSenderTimestamp() {
+    public Long getSenderTimestamp() {
         return this.senderTimestamp;
-    }
-
-    public Integer getIndex() {
-        return this.index;
     }
 
     public String getAuthor() {
@@ -39,7 +31,7 @@ public class Message {
     }
 
     // M1
-    public boolean getIsImportant() {
+    public Boolean getIsImportant() {
         return this.isImportant;
     }
 
@@ -49,7 +41,7 @@ public class Message {
     }
 
     // D1
-    public UUID getUuid(){
+    public UUID getUuid() {
         return this.uuid;
     }
 }
