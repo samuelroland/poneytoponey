@@ -26,7 +26,7 @@ import crypto.KeyPair;
 import crypto.RSA;
 
 public class HumanIdentity implements Identity {
-
+    private static boolean debug = false;
     private String username;
     private Map<UUID, Chat> chats;
     private Directory directory;
@@ -189,6 +189,10 @@ public class HumanIdentity implements Identity {
                 throw new RemoteException("No participant " + chat.getOtherUsername() + " found in the network !");
             }
             SafeMessage safeMessage = new SafeMessage(m, keyPair.getPrivate(), pubkey.get());
+            if (debug) {
+                System.out.println("Sending the following safeMessage");
+                safeMessage.dump();
+            }
             if (remote != null) {
                 remote.remoteSendMessageInChat(chatID, safeMessage);
             }
@@ -271,9 +275,16 @@ public class HumanIdentity implements Identity {
         if (publicKey.isEmpty()) {
             throw new RemoteException("The sender of the message doesn't exist in the network !");
         }
+        if (debug) {
+            System.out.println("Received the following safeMessage");
+            safeMessage.dump();
+        }
         Message msg = safeMessage.verifyAndDecrypt(publicKey.get(), keyPair.getPrivate());
         if (msg == null) {
             throw new RemoteException("Invalid message received !");
+        }
+        if (debug) {
+            System.out.println("SafeMessage decrypted into: " + msg.getTexte());
         }
         if (!msg.getAuthor().equals(author)) {
             throw new RemoteException("Invalid author field for this chat !");

@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.util.Base64;
 
 import crypto.Crypto;
 import crypto.RSA;
@@ -54,4 +55,14 @@ public class SafeMessage implements Serializable {
         return m;
     }
 
+    // TODO: remove this ? or keep this for the demo ??
+    public void dump() {
+        var enc = Base64.getEncoder();
+        System.out.println("SafeMessage:");
+        System.out.println("encryptedText: " + enc.encodeToString(encryptedText));
+        System.out.println("encryptedAuthor: " + enc.encodeToString(encryptedAuthor));
+        System.out.println("encryptedSenderTimestamp: " + enc.encodeToString(encryptedSenderTimestamp));
+        System.out.println("encryptedImportantFlag: " + enc.encodeToString(encryptedImportantFlag));
+        System.out.println("signature: " + enc.encodeToString(signature));
+    }
 }
