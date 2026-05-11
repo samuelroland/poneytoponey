@@ -7,14 +7,14 @@ public class Message {
     private String texte;
     private long senderTimestamp; // D1
     private String author;
-    public boolean isImportant; // M1
+    private boolean isImportant; // M1
     private final UUID uuid; // D1
 
     public Message(String texte, long senderTimestamp, String author, boolean isImportant) {
         this.texte = texte;
         this.senderTimestamp = senderTimestamp;
         this.author = author;
-        this.isImportant = false; // M1
+        this.isImportant = isImportant; // M1
         this.uuid = UUID.randomUUID(); // D1;
     }
 
