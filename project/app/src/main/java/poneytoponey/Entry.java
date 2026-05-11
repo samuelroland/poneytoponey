@@ -1,5 +1,7 @@
 package poneytoponey;
 
-public record Entry(String username, String ip, String publicKey) {
+import java.security.PublicKey;
+
+public record Entry(String username, String ip, PublicKey publicKey) {
 
 }

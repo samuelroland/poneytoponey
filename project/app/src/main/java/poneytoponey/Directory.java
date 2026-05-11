@@ -9,6 +9,10 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.security.Key;
+import java.security.KeyFactory;
+import java.security.PublicKey;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -31,7 +35,7 @@ public class Directory {
         }
     }
 
-    public List<Entry> list() throws Exception {
+    public List<Entry> list() {
         HttpURLConnection connection = null;
 
         try {
@@ -62,12 +66,13 @@ public class Directory {
                 String[] parts = line.split("\\s*/\\s*", 3);
                 if (parts.length >= 2) {
                     String pubkey = parts.length == 3 ? parts[2].trim() : "";
-                    result.add(new Entry(parts[0].trim(), parts[1].trim(), pubkey));
+                    result.add(new Entry(parts[0].trim(), parts[1].trim(), decodePublicKey(pubkey)));
                 }
             }
 
             return result;
-
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         } finally {
             if (connection != null) {
                 connection.disconnect();
@@ -256,6 +261,17 @@ public class Directory {
 
     protected String encodePublicKey(KeyPair keyPair) {
         return Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded());
+    }
+
+    protected PublicKey decodePublicKey(String publicKeyBase64) {
+        try {
+            byte[] keyBytes = Base64.getDecoder().decode(publicKeyBase64);
+            X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
+            KeyFactory factory = KeyFactory.getInstance("RSA");
+            return factory.generatePublic(spec);
+        } catch (Exception e) {
+            throw new RuntimeException("Could not decode public key");
+        }
     }
 
     protected String requireUsername(String username) {
