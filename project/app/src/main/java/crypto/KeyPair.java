@@ -11,12 +11,12 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
 // A RSA keypair
-// ChatGPT public free version was heavily used to load and persist methods
+// ChatGPT public free version was heavily used to load, config and persist methods
 public class KeyPair {
     private java.security.KeyPair pair;
-    // Files are stored in the current folder for ease of testing
-    private static final Path PUBLIC_KEY_FILE = Paths.get("public_key");
-    private static final Path PRIVATE_KEY_FILE = Paths.get("private_key");
+    // Files are stored in the configuration folder
+    private static final Path PUBLIC_KEY_FILE = getConfigDir().resolve("public_key");
+    private static final Path PRIVATE_KEY_FILE = getConfigDir().resolve("private_key");
 
     public KeyPair(java.security.KeyPair kp) {
         this.pair = kp;
@@ -54,6 +54,40 @@ public class KeyPair {
             Files.write(PRIVATE_KEY_FILE, pair.getPrivate().getEncoded());
         } catch (IOException e) {
             throw new RuntimeException("Failed to save key pair", e);
+        }
+    }
+
+    public static Path getConfigDir() {
+        Path path = findConfigDir();
+        try {
+            Files.createDirectories(path);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return path;
+    }
+
+    public static Path findConfigDir() {
+        String appName = "poneytoponey";
+        String os = System.getProperty("os.name").toLowerCase();
+        String home = System.getProperty("user.home");
+
+        if (os.contains("win")) {
+            String appData = System.getenv("APPDATA");
+            return Paths.get(appData, appName);
+
+        } else if (os.contains("mac")) {
+            return Paths.get(home, "Library", "Application Support", appName);
+
+        } else {
+            // Linux / Unix
+            String xdg = System.getenv("XDG_CONFIG_HOME");
+
+            if (xdg != null && !xdg.isBlank()) {
+                return Paths.get(xdg, appName);
+            }
+
+            return Paths.get(home, ".config", appName);
         }
     }
 }
