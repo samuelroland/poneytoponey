@@ -5,7 +5,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.*;
 
 import javax.crypto.Cipher;
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.OAEPParameterSpec;
 import javax.crypto.spec.PSource;
 
@@ -16,11 +15,15 @@ public class RSA implements Crypto {
 	private OAEPParameterSpec oaepParams; // parameters for RSA-OAEP
 	private Signature signer; // a way to sign with RSA
 
-	public RSA() throws NoSuchAlgorithmException, NoSuchPaddingException {
-		this.cipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA-256AndMGF1Padding");
-		this.oaepParams = new OAEPParameterSpec("SHA-256", "MGF1", MGF1ParameterSpec.SHA256,
-				PSource.PSpecified.DEFAULT);
-		this.signer = Signature.getInstance("SHA256withRSA");
+	public RSA() {
+		try {
+			this.cipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA-256AndMGF1Padding");
+			this.oaepParams = new OAEPParameterSpec("SHA-256", "MGF1", MGF1ParameterSpec.SHA256,
+					PSource.PSpecified.DEFAULT);
+			this.signer = Signature.getInstance("SHA256withRSA");
+		} catch (Exception e) {
+			throw new RuntimeException("RSA parameters are wrong: " + e);
+		}
 	}
 
 	@Override
