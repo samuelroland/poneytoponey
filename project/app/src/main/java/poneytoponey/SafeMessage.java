@@ -1,13 +1,16 @@
 package poneytoponey;
 
 import java.io.ByteArrayOutputStream;
+import java.io.Serializable;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
 import crypto.Crypto;
 import crypto.RSA;
 
-public class SafeMessage {
+// A safe message is the equivalent of a Message but fully encrypted and signed.
+// This ensures the confidentiality and authenticity of the message. 
+public class SafeMessage implements Serializable {
 
     private byte[] encryptedText;
     private byte[] encryptedAuthor;
