@@ -11,6 +11,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,7 +39,13 @@ public class HumanIdentity implements Identity {
     public HumanIdentity(String user, Directory directory) {
         this.directory = directory;
         this.username = user;
-        this.keyPair = generateKeyPair();
+        // Generate a new keypair or take an existing pair
+        if (KeyPair.aPairExists()) {
+            this.keyPair = KeyPair.load();
+        } else {
+            this.keyPair = generateKeyPair();
+            this.keyPair.persistToFile();
+        }
         if (System.getProperty("java.rmi.server.hostname") == null) {
             try {
                 System.setProperty("java.rmi.server.hostname", resolveRmiHostname());
@@ -100,6 +107,20 @@ public class HumanIdentity implements Identity {
                     .toList();
         } catch (Exception e) {
             return new ArrayList<>();
+        }
+    }
+
+    public Optional<PublicKey> getParticipantPublicKey(String username) {
+        try {
+            Optional<Entry> maybeEntry = this.directory.list().stream()
+                    .filter(entry -> entry.username().equals(username))
+                    .findFirst();
+            if (maybeEntry.isEmpty()) {
+                return Optional.empty();
+            }
+            return Optional.of(maybeEntry.get().publicKey());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
