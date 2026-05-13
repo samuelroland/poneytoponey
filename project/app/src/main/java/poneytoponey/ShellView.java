@@ -208,11 +208,12 @@ public class ShellView implements View {
         }
         try {
             identity.sendMessage(currentChat, text.trim(), important);
+            System.out.println("Sent" + (important ? " important" : "") + " message to " + currentChatRecipient + " at "
+                    + formatTimestamp(System.currentTimeMillis()) + ": " + text.trim());
         } catch (Exception e) {
-            System.out.println("Cannot send message : " + e.getMessage());
+            System.out.println("Cannot send message : " + e.toString());
+            e.printStackTrace();
         }
-        System.out.println("Sent" + (important ? " important" : "") + " message to " + currentChatRecipient + " at "
-                + formatTimestamp(System.currentTimeMillis()) + ": " + text.trim());
     }
 
     private void broadcast(String text) { // M2
