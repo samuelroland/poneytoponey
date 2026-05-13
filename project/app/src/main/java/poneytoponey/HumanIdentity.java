@@ -198,6 +198,7 @@ public class HumanIdentity implements Identity {
         Chat chat = chats.get(chatID);
         if (chat != null && chat.getApproved() && text != null) {
             Message m = chat.insertNewMessage(text, this.username, important);
+            saveChat(); // D2
             chat.registerPendingAck(m.getUuid());
             Optional<PublicKey> pubkey = getParticipantPublicKey(chat.getOtherUsername());
             if (pubkey.isEmpty()) {
@@ -209,10 +210,6 @@ public class HumanIdentity implements Identity {
                 safeMessage.dump();
             }
             if (remote != null) {
-              
-              // TODO !!!
-                remote.remoteSendMessageInChat(chatID, m.getTexte(), m.getSenderTimestamp(), prio);
-                saveChat(); // D2
                 remote.remoteSendMessageInChat(chatID, safeMessage);
             }
         }
@@ -286,26 +283,27 @@ public class HumanIdentity implements Identity {
 
     }
 
+    @Override
+    public void remoteSendBroadcastMessage(SignedMessage signedMessage) throws RemoteException {
+        Optional<PublicKey> pubkey = getParticipantPublicKey(signedMessage.getAuthor());
+        if (pubkey.isEmpty()) {
+            throw new RemoteException("Received broadcast without a valid participant " + signedMessage.getAuthor());
+        }
+        if (!signedMessage.verifySignature(pubkey.get())) {
+            throw new RemoteException(
+                    "Received broadcast without a valid signature from spoofer " + signedMessage.getAuthor());
+        }
+        for (View view : views) {
+            view.showBroadcastMessage(signedMessage);
+        }
+    }
+
     public void remoteSendMessageInChat(UUID chatID, SafeMessage safeMessage) throws RemoteException {
         Chat chat = chats.get(chatID);
-        if (chatID.equals(UUID_Broadcast)) { // M2
-            if (chat == null) {
-                chat = new Chat("BROADCAST", chatID);
-                chat.setApproved(true);
-                chats.put(chatID, chat);
-            }
-            Message msg = chat.insertNewMessage(text, "BROADCAST");
-            saveChat();
-            for (View view : views) {
-                view.showChatMessage(msg);
-            }
-            return;
-        }
-
         if (chat == null) {
             return; // à revoir
         }
-      
+
         // Verify message's signature, decrypt it and store it
         String author = chat.getOtherUsername();
         var publicKey = getParticipantPublicKey(author);
@@ -327,7 +325,7 @@ public class HumanIdentity implements Identity {
             throw new RemoteException("Invalid author field for this chat !");
         }
         chat.insertNewReceivedMessage(msg);
-      
+
         saveChat(); // D2
 
         for (View view : views) {
@@ -493,9 +491,9 @@ public class HumanIdentity implements Identity {
             try {
                 Identity remote = getRemoteIdentityFromUsername(user);
                 if (remote != null) {
-
-                    remote.remoteSendMessageInChat(UUID_Broadcast,
-                            ("[BROADCAST] venant de " + this.username + ": " + text), System.currentTimeMillis(), true);
+                    SignedMessage signedMessage = new SignedMessage(text, System.currentTimeMillis(), this.username,
+                            debug, this.keyPair.getPrivate());
+                    remote.remoteSendBroadcastMessage(signedMessage);
                 }
             } catch (Exception e) {
                 System.err.println("Erreur de Broadcast pour" + user + ":" + e.getMessage());

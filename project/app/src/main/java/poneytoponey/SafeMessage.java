@@ -26,25 +26,14 @@ public class SafeMessage implements Serializable {
         this.encryptedSenderTimestamp = crypto.encrypt(message.getSenderTimestamp().toString(), recipientPublicKey);
         this.encryptedImportantFlag = crypto.encrypt(message.getIsImportant().toString(), recipientPublicKey);
 
-        this.signature = crypto.sign(generateBytesToSign(), ourPrivateKey);
-    }
-
-    private byte[] generateBytesToSign() {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        try {
-            outputStream.write(this.encryptedText);
-            outputStream.write(this.encryptedAuthor);
-            outputStream.write(this.encryptedSenderTimestamp);
-            outputStream.write(this.encryptedImportantFlag);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to concatenate bytes buffer");
-        }
-        return outputStream.toByteArray();
+        this.signature = crypto.sign(Message.generateBytesToSign(encryptedText, encryptedAuthor,
+                encryptedSenderTimestamp, encryptedImportantFlag), ourPrivateKey);
     }
 
     public Message verifyAndDecrypt(PublicKey authorPublicKey, PrivateKey ourPrivateKey) {
         Crypto crypto = new RSA();
-        if (crypto.verifySignature(this.signature, generateBytesToSign(), authorPublicKey) == false) {
+        if (crypto.verifySignature(this.signature, Message.generateBytesToSign(encryptedText, encryptedAuthor,
+                encryptedSenderTimestamp, encryptedImportantFlag), authorPublicKey) == false) {
             return null;
         }
         String text = crypto.decrypt(this.encryptedText, ourPrivateKey);

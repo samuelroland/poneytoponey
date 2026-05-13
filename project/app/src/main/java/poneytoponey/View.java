@@ -14,6 +14,8 @@ public interface View {
 
     void showChatMessage(Message msg);
 
+    void showBroadcastMessage(Message msg);
+
     // D1
     HumanIdentity getIdentity();
 }

@@ -1,6 +1,7 @@
 package poneytoponey;
 
 import java.util.UUID;
+import java.io.ByteArrayOutputStream;
 import java.io.Serializable; //D2
 
 public class Message {
@@ -43,4 +44,17 @@ public class Message {
     public UUID getUuid() {
         return this.uuid;
     }
+
+    public static byte[] generateBytesToSign(byte[]... args) {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        try {
+            for (byte[] arg : args) {
+                outputStream.write(arg);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to concatenate bytes buffer");
+        }
+        return outputStream.toByteArray();
+    }
+
 }
