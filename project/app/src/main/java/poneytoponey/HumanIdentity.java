@@ -96,9 +96,6 @@ public class HumanIdentity implements Identity {
     public void leave() {
         System.out.println("Goodbye.");
         try {
-            for (Chat chat : chats.values()) {
-                closeChat(chat.getUuid());
-            }
             this.directory.leave(keyPair);
         } catch (Exception e) {
             System.err.println("Failed to leave sorry, but byebye: " + e.getMessage());
