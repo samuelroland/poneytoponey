@@ -4,7 +4,7 @@ import java.util.UUID;
 import java.io.ByteArrayOutputStream;
 import java.io.Serializable; //D2
 
-public class Message {
+public class Message implements Serializable {
 
     private static final long serialVersionUID = 1L; // D2 // lui aussi en sérialisable pour pouvoir etre mis en bytes
                                                      // dans le disque

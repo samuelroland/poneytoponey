@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ScheduledFuture;
 import java.io.Serializable; //D2
 
 public class Chat implements Serializable {
@@ -19,9 +18,8 @@ public class Chat implements Serializable {
     private List<Message> messages;
     private String otherUsername; // the username of the remote client
     // D1
-    private final Map<UUID, Instant> pendingAcks = new ConcurrentHashMap<>(); // suivi des ack en attente
+    private transient final Map<UUID, Instant> pendingAcks = new ConcurrentHashMap<>(); // suivi des ack en attente
     private static final Duration ACK_TIMEOUT = Duration.ofSeconds(30);
-    private transient ScheduledFuture<?> watchAcks; // D2
 
     // When creating a Chat locally
     public Chat(String otherUsername) {

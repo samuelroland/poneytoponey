@@ -433,6 +433,6 @@ public class ShellView implements View {
     public void showBroadcastMessage(Message msg) {
         System.out.println("Broadcast from " + msg.getAuthor() + ": ");
         showMessage(msg);
+        showPrompt();
     }
-
 }
