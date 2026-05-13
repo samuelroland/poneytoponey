@@ -466,7 +466,11 @@ public class HumanIdentity implements Identity {
         if (Files.exists(SAVE_PATH)) {
             try (ObjectInputStream in = new ObjectInputStream(Files.newInputStream(SAVE_PATH))) {
                 this.chats = (Map<UUID, Chat>) in.readObject();
-
+                // To avoid issue of null values for pendingAcks: Cannot invoke
+                // "java.util.Map.put(Object, Object)" because "this.pendingAcks" is null
+                for (Chat chat : chats.values()) {
+                    chat.resetAcks();
+                }
             } catch (IOException | ClassNotFoundException e) {
                 System.err.println("problème avec le load des chats" + e.getMessage());
             }
