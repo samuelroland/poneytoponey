@@ -22,6 +22,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import java.io.*; //D2
+import java.nio.file.*; //D2
 import crypto.KeyPair;
 import crypto.RSA;
 
@@ -35,6 +37,9 @@ public class HumanIdentity implements Identity {
     private Registry ourLocalRegistry;
     private String IDENTITY_BIND = "identity";
     private final ScheduledExecutorService watchAcks = Executors.newSingleThreadScheduledExecutor(); // D1
+
+    private Path SAVE_PATH; // D2, emplacement ou les chats sont sauvegardés
+    private static UUID UUID_Broadcast = UUID.fromString("00000000-0000-0000-0000-000000000001"); // M2
 
     public HumanIdentity(String user, Directory directory) {
         this.directory = directory;
@@ -55,6 +60,13 @@ public class HumanIdentity implements Identity {
         }
         this.views = new ArrayList<>();
         this.chats = new HashMap<>();
+        try {
+            Files.createDirectories(Paths.get("chats")); // D2 crée dossier chats pour sauvegarde
+        } catch (IOException e) {
+            System.err.println("problème de création du dossier de sauvegarde pour les messages" + e.getMessage());
+        }
+        this.SAVE_PATH = Paths.get("chats", user + ".dat"); // D2
+        loadChats(); // D2
         try {
             // Try joining the network by publishing the current object to the our local RMI
             // registry
@@ -141,6 +153,7 @@ public class HumanIdentity implements Identity {
         Identity remote = getRemoteIdentityFromUsername(recipient);
         Chat chat = new Chat(recipient);
         chats.put(chat.getUuid(), chat);
+        saveChat(); // D2
         remote.remoteAskForChat(this.username, chat.getUuid());
         return chat;
     }
@@ -160,6 +173,7 @@ public class HumanIdentity implements Identity {
             }
 
         }
+        saveChat(); // D2
     }
 
     public void refuseChat(UUID oldChatID) throws RemoteException, Exception {
@@ -171,6 +185,7 @@ public class HumanIdentity implements Identity {
                 remote.remoteRefuseChat(oldChatID);
             }
         }
+        saveChat(); // D2
     }
 
     public void subscribeViewForChatEvent(View view) {
@@ -194,6 +209,10 @@ public class HumanIdentity implements Identity {
                 safeMessage.dump();
             }
             if (remote != null) {
+              
+              // TODO !!!
+                remote.remoteSendMessageInChat(chatID, m.getTexte(), m.getSenderTimestamp(), prio);
+                saveChat(); // D2
                 remote.remoteSendMessageInChat(chatID, safeMessage);
             }
         }
@@ -203,6 +222,7 @@ public class HumanIdentity implements Identity {
         Identity remote = getRemoteIdentityFromChat(chatID);
         if (chats.containsKey(chatID)) {
             chats.remove(chatID);
+            saveChat(); // D2
         }
         if (remote != null) {
             remote.remoteCloseChat(chatID);
@@ -212,6 +232,7 @@ public class HumanIdentity implements Identity {
     // ----- Identity -----
     public void remoteAskForChat(String author, UUID chatID) throws RemoteException, NotBoundException {
         chats.put(chatID, new Chat(author, chatID)); // save the non approved chat
+        saveChat(); // pas sure de le mettre ici //D2
         for (View view : views) {
             view.showChatRequest(author);
         }
@@ -229,6 +250,7 @@ public class HumanIdentity implements Identity {
         });
         timeout.setDaemon(true);
         timeout.start();
+
     }
 
     public void remoteApproveBackChat(UUID chatID) throws RemoteException {
@@ -238,6 +260,7 @@ public class HumanIdentity implements Identity {
             String otherUsername = chat.getOtherUsername();
             chats.put(chat.getUuid(), chat);
             chat.setApproved(true);
+            saveChat(); // D2
             for (View view : views) {
                 view.showChatApprobation(otherUsername);
             }
@@ -256,7 +279,7 @@ public class HumanIdentity implements Identity {
             return; // à revoir
         }
         chats.remove(chatID); // delete the chat as cannot do anything with it !
-
+        saveChat(); // D2
         for (View view : views) {
             view.showChatRefuse(chat.getOtherUsername());
         }
@@ -265,10 +288,24 @@ public class HumanIdentity implements Identity {
 
     public void remoteSendMessageInChat(UUID chatID, SafeMessage safeMessage) throws RemoteException {
         Chat chat = chats.get(chatID);
+        if (chatID.equals(UUID_Broadcast)) { // M2
+            if (chat == null) {
+                chat = new Chat("BROADCAST", chatID);
+                chat.setApproved(true);
+                chats.put(chatID, chat);
+            }
+            Message msg = chat.insertNewMessage(text, "BROADCAST");
+            saveChat();
+            for (View view : views) {
+                view.showChatMessage(msg);
+            }
+            return;
+        }
 
         if (chat == null) {
             return; // à revoir
         }
+      
         // Verify message's signature, decrypt it and store it
         String author = chat.getOtherUsername();
         var publicKey = getParticipantPublicKey(author);
@@ -290,6 +327,8 @@ public class HumanIdentity implements Identity {
             throw new RemoteException("Invalid author field for this chat !");
         }
         chat.insertNewReceivedMessage(msg);
+      
+        saveChat(); // D2
 
         for (View view : views) {
             view.showChatMessage(msg);
@@ -418,5 +457,50 @@ public class HumanIdentity implements Identity {
             watchAcks.shutdownNow();
             Thread.currentThread().interrupt();
         }
+    }
+
+    public synchronized void saveChat() { // pour pas que plusieurs threads modifie des chats en même temps // D2
+        try (ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(SAVE_PATH))) {
+            out.writeObject(chats);
+        } catch (IOException e) {
+            System.err.println("erreur de sauvegarde des chats" + e.getMessage());
+        }
+        // potentiel problème avec les watchAcks j'ai rien compris
+    }
+
+    @SuppressWarnings("unchecked") // évite problème avec les maps pas serializables ?
+    public synchronized void loadChats() { // D2
+        if (Files.exists(SAVE_PATH)) {
+            try (ObjectInputStream in = new ObjectInputStream(Files.newInputStream(SAVE_PATH))) {
+                this.chats = (Map<UUID, Chat>) in.readObject();
+
+            } catch (IOException | ClassNotFoundException e) {
+                System.err.println("problème avec le load des chats" + e.getMessage());
+            }
+        }
+
+        else {
+            return;
+        }
+    }
+
+    public void broadcast(String text) throws RemoteException, Exception { // M2
+        List<String> users = listParticipantsUsername();
+        for (String user : users) {
+            if (user.equals(this.username)) { // on se l'envoie pas à soi même
+                continue;
+            }
+            try {
+                Identity remote = getRemoteIdentityFromUsername(user);
+                if (remote != null) {
+
+                    remote.remoteSendMessageInChat(UUID_Broadcast,
+                            ("[BROADCAST] venant de " + this.username + ": " + text), System.currentTimeMillis(), true);
+                }
+            } catch (Exception e) {
+                System.err.println("Erreur de Broadcast pour" + user + ":" + e.getMessage());
+            }
+        }
+        saveChat();
     }
 }

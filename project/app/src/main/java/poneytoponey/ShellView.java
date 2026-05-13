@@ -55,6 +55,7 @@ public class ShellView implements View {
                 + "\n  switch <recipient>    - switch to an existing chat"
                 + "\n  send <message>        - send a message to the active chat"
                 + "\n  send! <message>       - send an important message to a chat" // M1
+                + "\n  broadcast <message>   - send a message to all users in the network" // M2
                 + "\n  history               - show chat history of current chat"
                 + "\n  close <recipient>     - close a chat with a recipient"
                 + "\n  refuse <recipient>    - refuse a chat request or discard a chat"
@@ -214,6 +215,19 @@ public class ShellView implements View {
                 + formatTimestamp(System.currentTimeMillis()) + ": " + text.trim());
     }
 
+    private void broadcast(String text) { // M2
+        if (text == null || text.trim().isEmpty()) {
+            System.out.println("Broadcast message cannot be empty");
+            return;
+        }
+        try {
+            identity.broadcast(text.trim());
+            System.out.println("Sent broadcast : " + text.trim());
+        } catch (Exception e) {
+            System.out.println("Broadcast failed : " + e.getMessage());
+        }
+    }
+
     private void listParticipants() {
         List<String> participants = identity.listParticipantsUsername();
         if (participants.isEmpty()) {
@@ -283,6 +297,8 @@ public class ShellView implements View {
                 sendMessage(argument, false);
             case "send!" ->
                 sendMessage(argument, true); // M1
+            case "broadcast" ->
+                broadcast(argument); // M2
             case "history" ->
                 showHistory();
             case "close" ->

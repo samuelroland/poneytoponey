@@ -1,8 +1,12 @@
 package poneytoponey;
 
 import java.util.UUID;
+import java.io.Serializable; //D2
 
 public class Message {
+
+    private static final long serialVersionUID = 1L; // D2 // lui aussi en sérialisable pour pouvoir etre mis en bytes
+                                                     // dans le disque
 
     private String texte;
     private long senderTimestamp; // D1

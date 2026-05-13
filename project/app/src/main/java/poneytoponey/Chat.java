@@ -8,8 +8,11 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
+import java.io.Serializable; //D2
 
-public class Chat {
+public class Chat implements Serializable {
+
+    private static final long serialVersionUID = 1L; // D2 pour l'implémentation de serializable
 
     private UUID uuid;
     private boolean approved;
@@ -18,7 +21,7 @@ public class Chat {
     // D1
     private final Map<UUID, Instant> pendingAcks = new ConcurrentHashMap<>(); // suivi des ack en attente
     private static final Duration ACK_TIMEOUT = Duration.ofSeconds(30);
-    private ScheduledFuture<?> watchAcks;
+    private transient ScheduledFuture<?> watchAcks; // D2
 
     // When creating a Chat locally
     public Chat(String otherUsername) {
