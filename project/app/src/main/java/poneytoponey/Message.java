@@ -1,6 +1,5 @@
 package poneytoponey;
 
-import java.time.Instant;
 import java.util.UUID;
 import java.io.Serializable; //D2
 
@@ -10,19 +9,16 @@ public class Message {
                                                      // dans le disque
 
     private String texte;
-    private long senderTimestamp;
-    private Integer index;
+    private long senderTimestamp; // D1
     private String author;
-    public boolean isImportant; // M1
-    private Instant timestamp; // D1
+    private boolean isImportant; // M1
     private final UUID uuid; // D1
 
-    public Message(String texte, long senderTimestamp, Integer index, String author) {
+    public Message(String texte, long senderTimestamp, String author, boolean isImportant) {
         this.texte = texte;
         this.senderTimestamp = senderTimestamp;
-        this.index = index;
         this.author = author;
-        this.isImportant = false; // M1
+        this.isImportant = isImportant; // M1
         this.uuid = UUID.randomUUID(); // D1;
     }
 
@@ -30,12 +26,8 @@ public class Message {
         return this.texte;
     }
 
-    public long getSenderTimestamp() {
+    public Long getSenderTimestamp() {
         return this.senderTimestamp;
-    }
-
-    public Integer getIndex() {
-        return this.index;
     }
 
     public String getAuthor() {
@@ -43,13 +35,8 @@ public class Message {
     }
 
     // M1
-    public boolean getIsImportant() {
+    public Boolean getIsImportant() {
         return this.isImportant;
-    }
-
-    // M1
-    public void setIsImportant(boolean bool) {
-        this.isImportant = bool;
     }
 
     // D1

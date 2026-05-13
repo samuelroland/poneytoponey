@@ -52,9 +52,13 @@ public class Chat implements Serializable {
         this.approved = t;
     }
 
-    public Message insertNewMessage(String text, String author) {
+    public void insertNewReceivedMessage(Message msg) {
+        messages.add(msg);
+    }
+
+    public Message insertNewMessage(String text, String author, boolean important) {
         long ts = System.currentTimeMillis();
-        Message m = new Message(text, ts, messages.size(), author);
+        Message m = new Message(text, ts, author, important);
         messages.add(m);
         return m;
     }

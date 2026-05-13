@@ -1,5 +1,10 @@
 package poneytoponey;
 
+import java.time.Duration;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -177,7 +182,7 @@ public class ShellView implements View {
         }
     }
 
-    private void sendMessage(String text, boolean prio) {
+    private void sendMessage(String text, boolean important) {
         if (currentChat == null || currentChatRecipient == null) {
             System.out.println("No active chat selected. Use chat <recipient> first.");
             return;
@@ -202,11 +207,12 @@ public class ShellView implements View {
             return;
         }
         try {
-            identity.sendMessage(currentChat, text.trim(), prio);
+            identity.sendMessage(currentChat, text.trim(), important);
         } catch (Exception e) {
             System.out.println("Cannot send message : " + e.getMessage());
         }
-        System.out.println("Sent message to " + currentChatRecipient + ": " + text.trim());
+        System.out.println("Sent" + (important ? " important" : "") + " message to " + currentChatRecipient + " at "
+                + formatTimestamp(System.currentTimeMillis()) + ": " + text.trim());
     }
 
     private void broadcast(String text) { // M2
@@ -328,8 +334,17 @@ public class ShellView implements View {
         System.exit(0);
     }
 
+    private String formatTimestamp(long millis) {
+        Instant instant = Instant.ofEpochMilli(millis);
+        ZoneId localZone = ZoneId.systemDefault();
+        ZonedDateTime localTime = instant.atZone(localZone);
+        return localTime.format(
+                DateTimeFormatter.ofPattern("HH:mm:ss"));
+    }
+
     private void showMessage(Message msg) {
-        System.out.println(msg.getAuthor() + ": " + msg.getTexte());
+        System.out.println(formatTimestamp(msg.getSenderTimestamp()) + " - " + msg.getAuthor() + ": "
+                + (msg.getIsImportant() ? "[IMPORTANT] " : "") + msg.getTexte());
     }
 
     @Override
@@ -402,7 +417,7 @@ public class ShellView implements View {
                 } else {
                     System.out.println("History for chat with " + currentChatRecipient + ":");
                     for (Message message : messages) {
-                        System.out.println("  [" + message.getAuthor() + "] " + message.getTexte());
+                        showMessage(message);
                     }
                 }
             }

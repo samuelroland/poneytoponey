@@ -11,6 +11,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,12 +24,15 @@ import java.util.concurrent.TimeUnit;
 
 import java.io.*; //D2
 import java.nio.file.*; //D2
+import crypto.KeyPair;
+import crypto.RSA;
 
 public class HumanIdentity implements Identity {
-
+    private static boolean debug = false;
     private String username;
     private Map<UUID, Chat> chats;
     private Directory directory;
+    private final KeyPair keyPair;
     private List<View> views;
     private Registry ourLocalRegistry;
     private String IDENTITY_BIND = "identity";
@@ -40,6 +44,13 @@ public class HumanIdentity implements Identity {
     public HumanIdentity(String user, Directory directory) {
         this.directory = directory;
         this.username = user;
+        // Generate a new keypair or take an existing pair
+        if (KeyPair.aPairExists()) {
+            this.keyPair = KeyPair.load();
+        } else {
+            this.keyPair = generateKeyPair();
+            this.keyPair.persistToFile();
+        }
         if (System.getProperty("java.rmi.server.hostname") == null) {
             try {
                 System.setProperty("java.rmi.server.hostname", resolveRmiHostname());
@@ -64,7 +75,7 @@ public class HumanIdentity implements Identity {
             Identity stub = (Identity) UnicastRemoteObject.exportObject(this, poneytoponey.App.PORT);
             ourLocalRegistry.bind(IDENTITY_BIND, stub);
             try {
-                this.directory.join(username);
+                this.directory.join(username, keyPair);
                 // Register a hook to run at shutdown to make sure we leave() the directory
                 // before quitting the app when running Ctrl+c!
                 Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -89,7 +100,7 @@ public class HumanIdentity implements Identity {
             for (Chat chat : chats.values()) {
                 closeChat(chat.getUuid());
             }
-            this.directory.leave();
+            this.directory.leave(keyPair);
         } catch (Exception e) {
             System.err.println("Failed to leave sorry, but byebye: " + e.getMessage());
         }
@@ -108,6 +119,20 @@ public class HumanIdentity implements Identity {
                     .toList();
         } catch (Exception e) {
             return new ArrayList<>();
+        }
+    }
+
+    public Optional<PublicKey> getParticipantPublicKey(String username) {
+        try {
+            Optional<Entry> maybeEntry = this.directory.list().stream()
+                    .filter(entry -> entry.username().equals(username))
+                    .findFirst();
+            if (maybeEntry.isEmpty()) {
+                return Optional.empty();
+            }
+            return Optional.of(maybeEntry.get().publicKey());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -168,15 +193,27 @@ public class HumanIdentity implements Identity {
     }
 
     // M1
-    public void sendMessage(UUID chatID, String text, boolean prio) throws RemoteException, Exception {
+    public void sendMessage(UUID chatID, String text, boolean important) throws RemoteException, Exception {
         Identity remote = getRemoteIdentityFromChat(chatID);
         Chat chat = chats.get(chatID);
         if (chat != null && chat.getApproved() && text != null) {
-            Message m = chat.insertNewMessage(text, this.username);
+            Message m = chat.insertNewMessage(text, this.username, important);
             chat.registerPendingAck(m.getUuid());
+            Optional<PublicKey> pubkey = getParticipantPublicKey(chat.getOtherUsername());
+            if (pubkey.isEmpty()) {
+                throw new RemoteException("No participant " + chat.getOtherUsername() + " found in the network !");
+            }
+            SafeMessage safeMessage = new SafeMessage(m, keyPair.getPrivate(), pubkey.get());
+            if (debug) {
+                System.out.println("Sending the following safeMessage");
+                safeMessage.dump();
+            }
             if (remote != null) {
+              
+              // TODO !!!
                 remote.remoteSendMessageInChat(chatID, m.getTexte(), m.getSenderTimestamp(), prio);
                 saveChat(); // D2
+                remote.remoteSendMessageInChat(chatID, safeMessage);
             }
         }
     }
@@ -249,7 +286,7 @@ public class HumanIdentity implements Identity {
 
     }
 
-    public void remoteSendMessageInChat(UUID chatID, String text, long senderTimestamp, boolean prio) {
+    public void remoteSendMessageInChat(UUID chatID, SafeMessage safeMessage) throws RemoteException {
         Chat chat = chats.get(chatID);
         if (chatID.equals(UUID_Broadcast)) { // M2
             if (chat == null) {
@@ -268,15 +305,31 @@ public class HumanIdentity implements Identity {
         if (chat == null) {
             return; // à revoir
         }
-
-        Message msg;
-        if (prio) { // M1
-            msg = chat.insertNewMessage("[IMPORTANT] " + text, chat.getOtherUsername());
-            msg.setIsImportant(true);
-        } else {
-            msg = chat.insertNewMessage(text, chat.getOtherUsername());
+      
+        // Verify message's signature, decrypt it and store it
+        String author = chat.getOtherUsername();
+        var publicKey = getParticipantPublicKey(author);
+        if (publicKey.isEmpty()) {
+            throw new RemoteException("The sender of the message doesn't exist in the network !");
         }
+        if (debug) {
+            System.out.println("Received the following safeMessage");
+            safeMessage.dump();
+        }
+        Message msg = safeMessage.verifyAndDecrypt(publicKey.get(), keyPair.getPrivate());
+        if (msg == null) {
+            throw new RemoteException("Invalid message received !");
+        }
+        if (debug) {
+            System.out.println("SafeMessage decrypted into: " + msg.getTexte());
+        }
+        if (!msg.getAuthor().equals(author)) {
+            throw new RemoteException("Invalid author field for this chat !");
+        }
+        chat.insertNewReceivedMessage(msg);
+      
         saveChat(); // D2
+
         for (View view : views) {
             view.showChatMessage(msg);
         }
@@ -374,10 +427,22 @@ public class HumanIdentity implements Identity {
             view.showChatClose(chat.getOtherUsername());
         }
         try {
-            directory.removeUser(chat.getOtherUsername());
+            directory.removeUser(chat.getOtherUsername(), keyPair);
         } catch (Exception e) {
             System.err.println(
                     "[WATCHDOG] Impossible de désinscrire " + chat.getOtherUsername() + " : " + e.getMessage());
+        }
+    }
+
+    public KeyPair getKeyPair() {
+        return keyPair;
+    }
+
+    private static KeyPair generateKeyPair() {
+        try {
+            return new RSA().generateKeyPair();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to generate identity key pair", e);
         }
     }
 
