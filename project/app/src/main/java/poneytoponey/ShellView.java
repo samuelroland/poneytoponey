@@ -429,4 +429,10 @@ public class ShellView implements View {
         return this.identity;
     }
 
+    @Override
+    public void showBroadcastMessage(Message msg) {
+        System.out.println("Broadcast from " + msg.getAuthor() + ": ");
+        showMessage(msg);
+        showPrompt();
+    }
 }
