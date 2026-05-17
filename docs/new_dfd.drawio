@@ -23,9 +23,10 @@
             <mxPoint x="10" y="10" as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="5o2AJMf7U44TQk5wHL-S-4" edge="1" parent="1" source="XVhSQpjZNlD_zYg-Ex4A-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.005;exitY=0.702;exitDx=0;exitDy=0;exitPerimeter=0;">
+        <mxCell id="5o2AJMf7U44TQk5wHL-S-4" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.005;exitY=0.702;exitDx=0;exitDy=0;exitPerimeter=0;">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="230" y="417" as="targetPoint" />
+            <mxPoint x="430.79999999999995" y="419.24" as="sourcePoint" />
+            <mxPoint x="230" y="419" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="XVhSQpjZNlD_zYg-Ex4A-6" parent="1" style="html=1;dashed=0;whiteSpace=wrap;shape=mxgraph.dfd.externalEntity" value="&lt;div&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp;&amp;nbsp;&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; Gérer la session&amp;nbsp;&lt;span style=&quot;color: light-dark(rgb(51, 51, 255), rgb(51, 51, 255));&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: light-dark(rgb(51, 51, 255), rgb(51, 51, 255));&quot;&gt;sécurisée&lt;/span&gt;&amp;nbsp;de&amp;nbsp;&lt;/div&gt;&lt;div&gt;conversation&lt;/div&gt;" vertex="1">
@@ -128,11 +129,11 @@
         <mxCell id="5o2AJMf7U44TQk5wHL-S-2" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Création de la session " vertex="1">
           <mxGeometry height="30" width="130" x="592" y="246" as="geometry" />
         </mxCell>
-        <mxCell id="5o2AJMf7U44TQk5wHL-S-5" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Envoyer des messages &lt;span style=&quot;color: light-dark(rgb(51, 51, 255), rgb(51, 51, 255));&quot;&gt;avec des niveaux de priorisation&lt;/span&gt;" vertex="1">
+        <mxCell id="5o2AJMf7U44TQk5wHL-S-5" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Envoyer des messages &lt;span style=&quot;color: light-dark(rgb(51, 51, 255), rgb(51, 51, 255));&quot;&gt;chiffrés et signés&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;color: light-dark(rgb(51, 51, 255), rgb(51, 51, 255));&quot;&gt;avec des niveaux de priorité&lt;/span&gt;" vertex="1">
           <mxGeometry height="30" width="158" x="251" y="333" as="geometry" />
         </mxCell>
-        <mxCell id="5o2AJMf7U44TQk5wHL-S-6" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Recevoir des messages &lt;span style=&quot;color: light-dark(rgb(51, 51, 255), rgb(51, 51, 255));&quot;&gt;avec des niveaux de priorisation&lt;/span&gt;" vertex="1">
-          <mxGeometry height="30" width="168" x="243" y="378" as="geometry" />
+        <mxCell id="5o2AJMf7U44TQk5wHL-S-6" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Recevoir des messages&amp;nbsp;&lt;span style=&quot;color: light-dark(rgb(51, 51, 255), rgb(51, 51, 255));&quot;&gt;chiffrés et signés&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;color: light-dark(rgb(51, 51, 255), rgb(51, 51, 255));&quot;&gt;avec des niveaux de priorité&lt;/span&gt;" vertex="1">
+          <mxGeometry height="30" width="181" x="239.5" y="383" as="geometry" />
         </mxCell>
         <mxCell id="5o2AJMf7U44TQk5wHL-S-7" edge="1" parent="1" source="XVhSQpjZNlD_zYg-Ex4A-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.427;exitY=1.003;exitDx=0;exitDy=0;entryX=0;entryY=0;entryDx=0;entryDy=20;entryPerimeter=0;exitPerimeter=0;" target="XVhSQpjZNlD_zYg-Ex4A-8">
           <mxGeometry relative="1" as="geometry">
@@ -223,10 +224,10 @@
             <mxPoint x="427" y="560" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="noK1kiZnSc1rTQjXGOxm-3" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;span style=&quot;color: light-dark(rgb(51, 51, 255), rgb(51, 51, 255));&quot;&gt;Envoyer des messages en broadcast&lt;/span&gt;" vertex="1">
+        <mxCell id="noK1kiZnSc1rTQjXGOxm-3" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;span style=&quot;color: light-dark(rgb(51, 51, 255), rgb(51, 51, 255));&quot;&gt;Envoyer des messages en broadcast signés&lt;/span&gt;" vertex="1">
           <mxGeometry height="30" width="150" x="240" y="490" as="geometry" />
         </mxCell>
-        <mxCell id="noK1kiZnSc1rTQjXGOxm-7" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;span style=&quot;color: light-dark(rgb(51, 51, 255), rgb(51, 51, 255));&quot;&gt;Recevoir des messages en broadcast&lt;/span&gt;" vertex="1">
+        <mxCell id="noK1kiZnSc1rTQjXGOxm-7" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;span style=&quot;color: light-dark(rgb(51, 51, 255), rgb(51, 51, 255));&quot;&gt;Recevoir des messages en broadcast signés&lt;/span&gt;" vertex="1">
           <mxGeometry height="30" width="150" x="240" y="535" as="geometry" />
         </mxCell>
       </root>
