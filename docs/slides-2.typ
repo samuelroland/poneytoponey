@@ -15,7 +15,7 @@
 // See docs of diatypst on https://typst.app/universe/package/diatypst
 #show: slides.with(
   title: [ PoneyToPoney - chat en pair à pair Objet-Based],
-  subtitle: "ASAD 2026 - Présentation partie 1",
+  subtitle: "ASAD 2026 - Présentation partie 2",
   date: "22/04/2026",
   authors: "Léna Beust, Kylian Manzini, Iléane Crocq, Samuel Roland",
 
@@ -40,6 +40,7 @@
 
 #image("schemas/rmi.png", height: 89%)
 
+/*********
 == Java RMI
 
 #align(left + top, [
@@ -52,18 +53,68 @@
 
 #align(left + bottom, [Documentation : https://docs.oracle.com/javase/8/docs/technotes/guides/rmi/index.html])
 
+*/
+
+== Contraintes de qualités
+
+#align(left +top, [
+*Sécurité* :
+- S1 : Protéger l’interception et la modification des message entre deux noeuds
+-  S2 : Gérer l’authentification des utilisateurs avec une gestion des profils simple
+])
+
+
+
+
+
+
+== Contraintes de qualités
+#align(left +top, [
+*Disponibilité* : 
+- D1 : Gérer la disponibilité des autres users via des timeouts et des timestamps sur les messages et proposer des solutions en cas de problèmes.
+- D2 : Gérer une sauvegarde des discussions pour les rétablir en cas de déconnexion-reconnexion
+])
+
+#image("assets/dispo_illustration.png", width : 40%)
+
+
+
+
+== Contraintes de qualités
+#align(left +top, [
+*Maintenabilité* : 
+- M1 : Permettre d'attribuer des priorités aux messages qui impacte l'affichage le chat courant
+- M2 : Permettre de faire des chats de groupe et/ou une possibilité de broadcast
+])
+
+#image("assets/maint_illustration.png", width: 40%)
 
 
 == Diagramme de cas d'utilisations
 #image("usecase.svg")
+
+
+
+
 == Diagramme de requirements
 #image("requirements.svg")
+
+
+
 
 == Diagramme de séquences
 #image("sequence.svg", height: 112%)
 
+
+
+
 == Diagramme DFD level 1
-#image("dfd.pdf", width: 50%)
+#let img = image("new_dfd.pdf", width : 60%)
+#box(img, clip: true, inset: (bottom: -1in))
+
+
+
+
 
 == Diagramme de classe
 // On montre pas le premier, on le met juste ici en backup.
@@ -85,3 +136,6 @@
 
 #image("assets/demo.png")
 
+== Conclusion
+
+blabla
