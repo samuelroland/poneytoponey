@@ -362,7 +362,7 @@ public class ShellView implements View {
             // We probably have closed the stdin stream (probably with ctrl+d)
             exit();
         }
-
+        identity.startWatchAcks();
         showHelp();
         waitWithShellPrompt();
     }

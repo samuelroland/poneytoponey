@@ -13,11 +13,13 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.security.PublicKey;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -57,8 +59,8 @@ public class HumanIdentity implements Identity {
                 System.err.println("Cannot detect local RMI hostname: " + e.getMessage());
             }
         }
-        this.views = new ArrayList<>();
-        this.chats = new HashMap<>();
+        this.views = Collections.synchronizedList(new ArrayList<View>());
+        this.chats = new ConcurrentHashMap<>();
         try {
             Files.createDirectories(Paths.get("chats")); // D2 crée dossier chats pour sauvegarde
         } catch (IOException e) {
@@ -96,7 +98,7 @@ public class HumanIdentity implements Identity {
     public void leave() {
         System.out.println("Goodbye.");
         try {
-            this.directory.leave(keyPair);
+            this.directory.removeUser(this.username, keyPair);
         } catch (Exception e) {
             System.err.println("Failed to leave sorry, but byebye: " + e.getMessage());
         }
@@ -415,7 +417,6 @@ public class HumanIdentity implements Identity {
 
     // D1
     private void autoDisconnect(Chat chat) {
-        chat.setApproved(false);
         chats.remove(chat.getUuid());
         for (View view : views) {
             view.showChatClose(chat.getOtherUsername());
